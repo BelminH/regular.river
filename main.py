@@ -1,6 +1,6 @@
 import re
 
-import open_file
+import check_file
 import os.path
 
 re.debug = True
@@ -17,6 +17,7 @@ categories = {
     "Snacks/Convenience": [".*Integrerbar.*", ".*Dominos.*", ".*VINMONOPOLET.*", ".*VOITECHNOLO.*", ".*COCA-COLA ENTERPRISE.*"],
     "Entertainment": [".*BERGEN KINO.*", ".*NETFLIX.*", ".*TWITCHINTER.*", ".*DISNEYPLUS.*", ".*VALVE.*"],
     "Clothes": [".*DRESSMANN.*"],
+    "Body care and medicine": [".*APOTEK.*", ".*Farmasiet.*"],
     "Transportation": [".*Ryde Technology AS.*", ".*Skyss.*"],  # this is the correct format: ".*Ryde Technology AS.*"
     "Housing": ["VARMEREGNING.*", "HUSLEIE.*"],
     "Other": [],
@@ -28,6 +29,7 @@ totals = {
     "Snacks/Convenience": 0,
     "Entertainment": 0,
     "Clothes": 0,
+    "Body care and medicine": 0,
     "Transportation": 0,
     "Housing": 0,
     "Other": 0,
@@ -42,7 +44,7 @@ def get_file_name():
         file_path = input("Enter the file path: ")
         if not os.path.exists(file_path):
             print(f"{file_path} does not exist, try again")
-        elif not open_file.is_csv_file(file_path):
+        elif not check_file.is_csv_file(file_path):
             print(f"{file_path} is not a CSV file, try again")
         else:
             print(f"{file_path} is a CSV file")
