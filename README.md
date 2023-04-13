@@ -1,3 +1,5 @@
+[![Python CI](https://github.com/BelminH/regular.river/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BelminH/regular.river/actions/workflows/build.yml)
+
 ## Auto bank 
 
 This is a Python script that reads a CSV file with bank transactions and categorizes them based on regular expressions. It then displays the total amount for each category and prompts the user to categorize any unknown transactions.
