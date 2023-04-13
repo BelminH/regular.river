@@ -192,3 +192,5 @@ Temporary Items
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij,sonar,sonarqube,java
 *.xml
+
+*.csv
