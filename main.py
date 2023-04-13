@@ -2,29 +2,34 @@ import re
 
 import check_file
 import os.path
+import os
 
 re.debug = True
 
 
 skip = {
-    "Skip": [".*Nettbank.*", ".*Overfï¿½ring.*", ".*Regningskonto.*", ".*Overføring.*", ".*DANSKE BANK.*", ".*Akademikerne.*", ".*Aksjesparekonto.*"],
+    "Skip": [".*Nettbank.*", ".*Overfï¿½ring.*", ".*Regningskonto.*", ".*Overføring.*", ".*DANSKE BANK.*", ".*Akademikerne.*",
+             ".*Aksjesparekonto.*", ".*Sparekonto.*"],
 }
 
 
 # define the categories
 # ".*WORD.*" this is the format
 categories = {
-    "Food and Groceries": [".*REMA.*", ".*BUNNPRIS.*", ".*COOP.*", ".*Meny.*", ".*EXTRA.*", ".*TooGoodToG.*"],
-    "Snacks/Convenience": [".*Integrerbar.*", ".*Dominos.*", ".*VINMONOPOLET.*", ".*VOITECHNOLO.*", ".*COCA-COLA ENTERPRISE.*"],
+    "Food and Groceries": [".*REMA.*", ".*BUNNPRIS.*", ".*COOP.*", ".*Meny.*", ".*EXTRA.*", ".*TooGoodToG.*", ".*Spar.*"],
+    "Snacks/Convenience": [".*Integrerbar.*", ".*Dominos.*", ".*VINMONOPOLET.*", ".*VOITECHNOLO.*",
+                           ".*COCA-COLA ENTERPRISE.*", ".*STUD.KAFÈ.*", ".*FOODORA.*", ".*Kaffibar.*"],
     "Entertainment": [".*BERGEN KINO.*", ".*NETFLIX.*", ".*TWITCHINTER.*", ".*DISNEYPLUS.*", ".*VALVE.*", ".*NINTENDO.*", ".*STEAM.*"],
-    "Electronic": [".*Komplett.*"], 
-    "Internett": [".*internett.*"], 
+    "Electronic": [".*Komplett.*"],
+    "Internett": [".*internett.*"],
     "Clothes": [".*DRESSMANN.*"],
     "Body care and medicine": [".*APOTEK.*", ".*Farmasiet.*", ".*LEGESENTERET.*", ".*Tannhelse.*"],
-    "Transportation": [".*Ryde Technology AS.*", ".*Skyss.*"],  # this is the correct format: ".*Ryde Technology AS.*"
+    # this is the correct format: ".*Ryde Technology AS.*"
+    "Transportation": [".*Ryde Technology AS.*", ".*Skyss.*", ".*Ryde.*", ".*VOISCOOTERS.*"],
     "Housing": ["VARMEREGNING.*", "HUSLEIE.*", ".*bo.sammen.no.*"],
-    "Other expenses": [".*TEKNA.*"], 
+    "Other expenses": [".*TEKNA.*", ".*TILE.*", ".*SPOTIFY.*"],
     "Other": [],
+    "Income": [],
 }
 
 # create a dictionary to store the totals for each category
@@ -33,13 +38,14 @@ totals = {
     "Snacks/Convenience": 0,
     "Entertainment": 0,
     "Electronic": 0,
-    "Internett": 0, 
+    "Internett": 0,
     "Clothes": 0,
     "Body care and medicine": 0,
     "Transportation": 0,
     "Housing": 0,
     "Other expenses": 0,
     "Other": 0,
+    "Income": 0,
 }
 
 # create a list for unknown transactions
@@ -58,9 +64,9 @@ def get_file_name():
             return file_path
 
 
-def main():
+def main(file_path):
     # read the transactions from the CSV file
-    with open(file=get_file_name(), encoding="iso-8859-1") as file:
+    with open(file=file_path, encoding="iso-8859-1") as file:
         next(file)  # skip the header line
         for line in file:
             # split the line into columns
@@ -69,10 +75,11 @@ def main():
             merchant = columns[3].strip()
             amount = columns[4].strip()
             amount = amount.replace('"', '')
-            amount = amount.replace(".", "")  # Remove any periods (thousands separator)
-            amount = amount.replace(",", ".")  # Replace the comma with a period (decimal separator)
+            # Remove any periods (thousands separator)
+            amount = amount.replace(".", "")
+            # Replace the comma with a period (decimal separator)
+            amount = amount.replace(",", ".")
             amount = float(amount)  # Convert the amount to a float
-
 
             # find the category for this transaction
             found = False
@@ -92,7 +99,8 @@ def main():
                 for skip_category, skip_merchants in skip.items():
                     for skip_merchant in skip_merchants:
                         # compile the regular expression pattern for this merchant
-                        pattern = re.compile(skip_merchant, flags=re.IGNORECASE)
+                        pattern = re.compile(
+                            skip_merchant, flags=re.IGNORECASE)
                         if pattern.match(merchant):
                             found = True
                             print(f"Skipping '{merchant}'")
@@ -115,7 +123,8 @@ def main():
     # ask the user where to add the unknown transactions
     if unknown:
         for merchant, amount in unknown:
-            print(f"\nWhere do you want to add the transaction for '{merchant}'?")
+            print(
+                f"\nWhere do you want to add the transaction for '{merchant}' with the amount {amount}?")
             for i, category in enumerate(categories, start=1):
                 print(f"{i}. {category}")
             choice = int(input("Enter the number of the category: "))
@@ -129,9 +138,15 @@ def main():
     # print the updated totals
     print("Updated totals:")
     for category, total in totals.items():
+        # making it easier to import to google sheets
         print(f"Total for {category}: {total:.2f}".replace('.', ','))
 
+    
+    # Delete the CSV file
+    print (f"\n\nDeleting {file_path}")
+    os.remove(file_path)
 
 
 if __name__ == '__main__':
-    main()
+    file_path = get_file_name()
+    main(file_path)
