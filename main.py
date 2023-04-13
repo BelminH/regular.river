@@ -7,19 +7,23 @@ re.debug = True
 
 
 skip = {
-    "Skip": [".*Nettbank.*", ".*Overfï¿½ring.*", ".*Regningskonto.*", ".*Overføring.*"],
+    "Skip": [".*Nettbank.*", ".*Overfï¿½ring.*", ".*Regningskonto.*", ".*Overføring.*", ".*DANSKE BANK.*", ".*Akademikerne.*", ".*Aksjesparekonto.*"],
 }
 
 
 # define the categories
+# ".*WORD.*" this is the format
 categories = {
-    "Food and Groceries": [".*REMA.*", ".*BUNNPRIS.*", ".*COOP.*", ".*Meny.*", ".*EXTRA.*"],
+    "Food and Groceries": [".*REMA.*", ".*BUNNPRIS.*", ".*COOP.*", ".*Meny.*", ".*EXTRA.*", ".*TooGoodToG.*"],
     "Snacks/Convenience": [".*Integrerbar.*", ".*Dominos.*", ".*VINMONOPOLET.*", ".*VOITECHNOLO.*", ".*COCA-COLA ENTERPRISE.*"],
-    "Entertainment": [".*BERGEN KINO.*", ".*NETFLIX.*", ".*TWITCHINTER.*", ".*DISNEYPLUS.*", ".*VALVE.*"],
+    "Entertainment": [".*BERGEN KINO.*", ".*NETFLIX.*", ".*TWITCHINTER.*", ".*DISNEYPLUS.*", ".*VALVE.*", ".*NINTENDO.*", ".*STEAM.*"],
+    "Electronic": [".*Komplett.*"], 
+    "Internett": [".*internett.*"], 
     "Clothes": [".*DRESSMANN.*"],
-    "Body care and medicine": [".*APOTEK.*", ".*Farmasiet.*"],
+    "Body care and medicine": [".*APOTEK.*", ".*Farmasiet.*", ".*LEGESENTERET.*", ".*Tannhelse.*"],
     "Transportation": [".*Ryde Technology AS.*", ".*Skyss.*"],  # this is the correct format: ".*Ryde Technology AS.*"
-    "Housing": ["VARMEREGNING.*", "HUSLEIE.*"],
+    "Housing": ["VARMEREGNING.*", "HUSLEIE.*", ".*bo.sammen.no.*"],
+    "Other expenses": [".*TEKNA.*"], 
     "Other": [],
 }
 
@@ -28,10 +32,13 @@ totals = {
     "Food and Groceries": 0,
     "Snacks/Convenience": 0,
     "Entertainment": 0,
+    "Electronic": 0,
+    "Internett": 0, 
     "Clothes": 0,
     "Body care and medicine": 0,
     "Transportation": 0,
     "Housing": 0,
+    "Other expenses": 0,
     "Other": 0,
 }
 
