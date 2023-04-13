@@ -68,13 +68,11 @@ def main():
             # get the merchant and amount
             merchant = columns[3].strip()
             amount = columns[4].strip()
-            amount = amount.replace(",", ".")
-            amount = amount.replace("-", "")
             amount = amount.replace('"', '')
-            parts = amount.split(".")
-            integer = int(parts[0])
-            fractional = float("0." + parts[1])
-            amount = integer + fractional
+            amount = amount.replace(".", "")  # Remove any periods (thousands separator)
+            amount = amount.replace(",", ".")  # Replace the comma with a period (decimal separator)
+            amount = float(amount)  # Convert the amount to a float
+
 
             # find the category for this transaction
             found = False
@@ -107,7 +105,7 @@ def main():
 
     # print the totals for each category
     for category, total in totals.items():
-        print(f"Total for {category}: {total:.2f}")
+        print(f"- {merchant}: {amount:.2f}".replace('.', ','))
 
     # print the unknown transactions
     print(f"\n There was({len(unknown)}) unknown transactions:")
@@ -131,7 +129,8 @@ def main():
     # print the updated totals
     print("Updated totals:")
     for category, total in totals.items():
-        print(f"Total for {category}: {total:.2f}")
+        print(f"Total for {category}: {total:.2f}".replace('.', ','))
+
 
 
 if __name__ == '__main__':
