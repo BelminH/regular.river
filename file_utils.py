@@ -1,7 +1,7 @@
 import os
 
 
-def is_csv_file(file_path):
+def is_valid_csv_file(file_path):
     """
     Checks if the given file path points to a CSV file.
 

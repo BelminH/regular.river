@@ -1,6 +1,8 @@
 import os
 import re
-import is_valid_csv_file
+
+
+from file_utils import is_valid_csv_file
 
 skip = {
     "Skip": [".*Nettbank.*", ".*Overfï¿½ring.*", ".*Regningskonto.*", ".*Overføring.*", ".*DANSKE BANK.*", ".*Akademikerne.*",
@@ -51,7 +53,7 @@ def get_file_name():
         file_path = input("Enter the file path: ")
         if not os.path.exists(file_path):
             print(f"{file_path} does not exist, try again")
-        elif not is_valid_csv_file.is_csv_file(file_path):
+        elif not file_utils.is_valid_csv_file(file_path):
             print(f"{file_path} is not a CSV file, try again")
         else:
             print(f"{file_path} is a CSV file")
@@ -143,11 +145,8 @@ def main(file_path):
         print(f"Total for {category}: {total:.2f}".replace('.', ','))
 
     # Delete the CSV file
-    print (f"\n\nDeleting {file_path}")
+    print(f"\n\nDeleting {file_path}")
     os.remove(file_path)
-
-    # ... (the rest of the code in the main function, starting from "print the totals for each category")
-    # ... (except for the final line, which should now be: "os.remove(file_path)")
 
 
 if __name__ == '__main__':
