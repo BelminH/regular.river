@@ -45,6 +45,7 @@ totals = {
 # create a list for unknown transactions
 unknown = []
 
+
 def get_file_name():
     while True:
         file_path = input("Enter the file path: ")
@@ -55,6 +56,7 @@ def get_file_name():
         else:
             print(f"{file_path} is a CSV file")
             return file_path
+
 
 def get_transactions(file_path):
     transactions = []
@@ -71,40 +73,48 @@ def get_transactions(file_path):
             transactions.append((merchant, amount))
     return transactions
 
+
 def classify_transactions(transactions, categories, totals, skip):
     unknown = []
     for merchant, amount in transactions:
         found = False
-        for category, merchants in categories.items():
-            for merchant_name in merchants:
-                pattern = re.compile(merchant_name, flags=re.IGNORECASE)
+
+        # First, check the skip dictionary
+        for skip_category, skip_merchants in skip.items():
+            for skip_merchant in skip_merchants:
+                pattern = re.compile(skip_merchant, flags=re.IGNORECASE)
                 if pattern.match(merchant):
                     found = True
-                    totals[category] += amount
                     break
             if found:
                 break
+
+        # If the transaction was not skipped, try to categorize it
         if not found:
-            for skip_category, skip_merchants in skip.items():
-                for skip_merchant in skip_merchants:
-                    pattern = re.compile(skip_merchant, flags=re.IGNORECASE)
+            for category, merchants in categories.items():
+                for merchant_name in merchants:
+                    pattern = re.compile(merchant_name, flags=re.IGNORECASE)
                     if pattern.match(merchant):
                         found = True
+                        totals[category] += amount
                         break
                 if found:
                     break
+
+        # Add the transaction to the unknown list if it was neither skipped nor categorized
         if not found:
             unknown.append((merchant, amount))
+
     return unknown
+
 
 def main(file_path):
     transactions = get_transactions(file_path)
     unknown = classify_transactions(transactions, categories, totals, skip)
 
-     # print the totals for each category
+    # print the totals for each category
     for category, total in totals.items():
         print(f"- {category}: {total:.2f}".replace('.', ','))
-
 
     # print the unknown transactions
     print(f"\n There was({len(unknown)}) unknown transactions:")
@@ -127,18 +137,18 @@ def main(file_path):
             totals[selected_category] += amount
 
     # print the updated totals
-    print("Updated totals:")
+    print(f"\n\n Updated totals:")
     for category, total in totals.items():
         # making it easier to import to google sheets
         print(f"Total for {category}: {total:.2f}".replace('.', ','))
 
-    
     # Delete the CSV file
     # print (f"\n\nDeleting {file_path}")
     # os.remove(file_path)
 
     # ... (the rest of the code in the main function, starting from "print the totals for each category")
     # ... (except for the final line, which should now be: "os.remove(file_path)")
+
 
 if __name__ == '__main__':
     file_path = get_file_name()
