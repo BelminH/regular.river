@@ -1,7 +1,7 @@
 import os
 import re
 
-
+ 
 from file_utils import is_valid_csv_file
 
 skip = {
@@ -53,7 +53,7 @@ def get_file_name():
         file_path = input("Enter the file path: ")
         if not os.path.exists(file_path):
             print(f"{file_path} does not exist, try again")
-        elif not file_utils.is_valid_csv_file(file_path):
+        elif not is_valid_csv_file(file_path):
             print(f"{file_path} is not a CSV file, try again")
         else:
             print(f"{file_path} is a CSV file")
