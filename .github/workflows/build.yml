@@ -29,7 +29,7 @@ jobs:
         flake8 . --count --exclude=env --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest and coverage
       run: |
-        pytest --cov=my_module --cov-report=xml:coverage.xml
+        pytest tests/ --cov=file_utils --cov=transaction_classifier --cov-report=xml:coverage.xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
       with:
