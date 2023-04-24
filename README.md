@@ -9,7 +9,7 @@ Installation
     Clone the repository to your local machine.
 
 #### Usage
-
+ 
     Run the script by running python main.py.
     Enter the file path for the CSV file when prompted.
     The script will categorize the transactions and display the totals for each category.
