@@ -1,27 +1,69 @@
 import os
 import re
 
- 
+
 from file_utils import is_valid_csv_file
 
 skip = {
-    "Skip": [".*Nettbank.*", ".*Overfï¿½ring.*", ".*Regningskonto.*", ".*Overføring.*", ".*DANSKE BANK.*", ".*Akademikerne.*",
-             ".*Aksjesparekonto.*", ".*Sparekonto.*"],
+    "Skip": [
+        ".*Nettbank.*",
+        ".*Overfï¿½ring.*",
+        ".*Regningskonto.*",
+        ".*Overføring.*",
+        ".*DANSKE BANK.*",
+        ".*Akademikerne.*",
+        ".*Aksjesparekonto.*",
+        ".*Sparekonto.*",
+    ],
 }
 
 
 # define the categories
 # ".*WORD.*" this is the format
 categories = {
-    "Food and Groceries": [".*REMA.*", ".*BUNNPRIS.*", ".*COOP.*", ".*Meny.*", ".*EXTRA.*", ".*TooGoodToG.*", ".*Spar.*"],
-    "Snacks/Convenience": [".*Integrerbar.*", ".*Dominos.*", ".*VINMONOPOLET.*", ".*VOITECHNOLO.*",
-                           ".*COCA-COLA ENTERPRISE.*", ".*STUD.KAFÈ.*", ".*FOODORA.*", ".*Kaffibar.*"],
-    "Entertainment": [".*BERGEN KINO.*", ".*NETFLIX.*", ".*TWITCHINTER.*", ".*DISNEYPLUS.*", ".*VALVE.*", ".*NINTENDO.*", ".*STEAM.*"],
+    "Food and Groceries": [
+        ".*REMA.*",
+        ".*BUNNPRIS.*",
+        ".*COOP.*",
+        ".*Meny.*",
+        ".*EXTRA.*",
+        ".*TooGoodToG.*",
+        ".*Spar.*",
+    ],
+    "Snacks/Convenience": [
+        ".*Integrerbar.*",
+        ".*Dominos.*",
+        ".*VINMONOPOLET.*",
+        ".*VOITECHNOLO.*",
+        ".*COCA-COLA ENTERPRISE.*",
+        ".*STUD.KAFÈ.*",
+        ".*FOODORA.*",
+        ".*Kaffibar.*",
+    ],
+    "Entertainment": [
+        ".*BERGEN KINO.*",
+        ".*NETFLIX.*",
+        ".*TWITCHINTER.*",
+        ".*DISNEYPLUS.*",
+        ".*VALVE.*",
+        ".*NINTENDO.*",
+        ".*STEAM.*",
+    ],
     "Electronic": [".*Komplett.*"],
     "Internett": [".*internett.*"],
     "Clothes": [".*DRESSMANN.*"],
-    "Body care and medicine": [".*APOTEK.*", ".*Farmasiet.*", ".*LEGESENTERET.*", ".*Tannhelse.*"],
-    "Transportation": [".*Ryde Technology AS.*", ".*Skyss.*", ".*Ryde.*", ".*VOISCOOTERS.*"],
+    "Body care and medicine": [
+        ".*APOTEK.*",
+        ".*Farmasiet.*",
+        ".*LEGESENTERET.*",
+        ".*Tannhelse.*",
+    ],
+    "Transportation": [
+        ".*Ryde Technology AS.*",
+        ".*Skyss.*",
+        ".*Ryde.*",
+        ".*VOISCOOTERS.*",
+    ],
     "Housing": ["VARMEREGNING.*", "HUSLEIE.*", ".*bo.sammen.no.*"],
     "Other expenses": [".*TEKNA.*", ".*TILE.*", ".*SPOTIFY.*"],
     "Other": [],
@@ -68,7 +110,7 @@ def get_transactions(file_path):
             columns = line.strip().split(";")
             merchant = columns[3].strip()
             amount = columns[4].strip()
-            amount = amount.replace('"', '')
+            amount = amount.replace('"', "")
             amount = amount.replace(".", "")
             amount = amount.replace(",", ".")
             amount = float(amount)
@@ -116,7 +158,7 @@ def main(file_path):
 
     # print the totals for each category
     for category, total in totals.items():
-        print(f"- {category}: {total:.2f}".replace('.', ','))
+        print(f"- {category}: {total:.2f}".replace(".", ","))
 
     # print the unknown transactions
     print(f"\n There was({len(unknown)}) unknown transactions:")
@@ -127,7 +169,8 @@ def main(file_path):
     if unknown:
         for merchant, amount in unknown:
             print(
-                f"\nWhere do you want to add the transaction for '{merchant}' with the amount {amount}?")
+                f"\nWhere do you want to add the transaction for '{merchant}' with the amount {amount}?"
+            )
             for i, category in enumerate(categories, start=1):
                 print(f"{i}. {category}")
             choice = int(input("Enter the number of the category: "))
@@ -142,13 +185,13 @@ def main(file_path):
     print(f"\n\n Updated totals:")
     for category, total in totals.items():
         # making it easier to import to google sheets
-        print(f"Total for {category}: {total:.2f}".replace('.', ','))
+        print(f"Total for {category}: {total:.2f}".replace(".", ","))
 
     # Delete the CSV file
     print(f"\n\nDeleting {file_path}")
     os.remove(file_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     file_path = get_file_name()
     main(file_path)

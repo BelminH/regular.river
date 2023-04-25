@@ -10,6 +10,3 @@ def is_valid_csv_file(file_path):
         - False otherwise.
     """
     return os.path.isfile(file_path) and file_path.lower().endswith(".csv")
-
-
-
