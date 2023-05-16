@@ -1,6 +1,5 @@
 import os
 import re
-import sqlite3
 
 from file_utils import is_valid_csv_file
 
@@ -20,55 +19,6 @@ skip = {
 
 # define the categories
 # ".*WORD.*" this is the format
-categories = {
-    "Food and Groceries": [
-        ".*REMA.*",
-        ".*BUNNPRIS.*",
-        ".*COOP.*",
-        ".*Meny.*",
-        ".*EXTRA.*",
-        ".*TooGoodToG.*",
-        ".*Spar.*",
-    ],
-    "Snacks/Convenience": [
-        ".*Integrerbar.*",
-        ".*Dominos.*",
-        ".*VINMONOPOLET.*",
-        ".*VOITECHNOLO.*",
-        ".*COCA-COLA ENTERPRISE.*",
-        ".*STUD.KAFÈ.*",
-        ".*FOODORA.*",
-        ".*Kaffibar.*",
-    ],
-    "Entertainment": [
-        ".*BERGEN KINO.*",
-        ".*NETFLIX.*",
-        ".*TWITCHINTER.*",
-        ".*DISNEYPLUS.*",
-        ".*VALVE.*",
-        ".*NINTENDO.*",
-        ".*STEAM.*",
-    ],
-    "Electronic": [".*Komplett.*"],
-    "Internett": [".*internett.*"],
-    "Clothes": [".*DRESSMANN.*"],
-    "Body care and medicine": [
-        ".*APOTEK.*",
-        ".*Farmasiet.*",
-        ".*LEGESENTERET.*",
-        ".*Tannhelse.*",
-    ],
-    "Transportation": [
-        ".*Ryde Technology AS.*",
-        ".*Skyss.*",
-        ".*Ryde.*",
-        ".*VOISCOOTERS.*",
-    ],
-    "Housing": ["VARMEREGNING.*", "HUSLEIE.*", ".*bo.sammen.no.*"],
-    "Other expenses": [".*TEKNA.*", ".*TILE.*", ".*SPOTIFY.*"],
-    "Other": [],
-    "Income": [],
-}
 
 # create a dictionary to store the totals for each category
 totals = {
@@ -118,35 +68,37 @@ def get_transactions(file_path):
     return transactions
 
 
-def classify_transactions(transactions, cursor):
+def classify_transactions(transactions, categories, totals, skip):
     unknown = []
     for merchant, amount in transactions:
         found = False
 
-        # Fetch all categories and their associated patterns
-        cursor.execute("SELECT * FROM categories")
-        categories = cursor.fetchall()
-
-        for category in categories:
-            category_id, category_name = category
-
-            # Fetch the patterns associated with the current category
-            cursor.execute(
-                "SELECT pattern FROM patterns WHERE category_id = ?", (category_id,)
-            )
-            patterns = cursor.fetchall()
-
-            for pattern in patterns:
-                # Form the regex pattern
-                pattern = re.compile(f".*{pattern[0]}.*", flags=re.IGNORECASE)
-
+        # First, check the skip dictionary
+        for skip_category, skip_merchants in skip.items():
+            for skip_merchant in skip_merchants:
+                """
+                the format from the db is i.e komplett
+                we then need to ignore words and letter before and after the word
+                this is done with .*{skip_merchant}.*
+                """
+                pattern = re.compile(f".*{skip_merchant}.*", flags=re.IGNORECASE)
                 if pattern.match(merchant):
                     found = True
-                    totals[category_name] += amount
                     break
-
             if found:
                 break
+
+        # If the transaction was not skipped, try to categorize it
+        if not found:
+            for category, merchants in categories.items():
+                for merchant_name in merchants:
+                    pattern = re.compile(f".*{merchant_name}.*", flags=re.IGNORECASE)
+                    if pattern.match(merchant):
+                        found = True
+                        totals[category] += amount
+                        break
+                if found:
+                    break
 
         # Add the transaction to the unknown list if it was neither skipped nor categorized
         if not found:
