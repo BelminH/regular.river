@@ -2,7 +2,8 @@ import os
 import re
 
 from file_utils import is_valid_csv_file
-from db_operations import load_categories
+from db.db_operations import load_categories
+from db.add_pattern_to_db import add_pattern_to_db
 
 skip = {
     "Skip": [
@@ -77,11 +78,6 @@ def classify_transactions(transactions, categories, totals, skip):
         # First, check the skip dictionary
         for skip_category, skip_merchants in skip.items():
             for skip_merchant in skip_merchants:
-                """
-                the format from the db is i.e komplett
-                we then need to ignore words and letter before and after the word
-                this is done with .*{skip_merchant}.*
-                """
                 pattern = re.compile(f".*{skip_merchant}.*", flags=re.IGNORECASE)
                 if pattern.match(merchant):
                     found = True
@@ -137,6 +133,14 @@ def main(file_path):
             categories[selected_category].append(merchant)
             totals[selected_category] += amount
 
+            # ask the user if they want to add the merchant to the skip list
+            add_to_skip = input(
+                f"Do you want to add '{merchant}' to the skip list? (yes/no): "
+            )
+            if add_to_skip.lower() == "yes":
+                skip["Skip"].append(merchant)
+                print(f"'{merchant}' has been added to the skip list.")
+
     # print the updated totals
     print(f"\n\n Updated totals:")
     for category, total in totals.items():
@@ -145,8 +149,9 @@ def main(file_path):
 
     # Delete the CSV file
     if not (debug):
-        print(f"\n\nDeleting {file_path}")
-        os.remove(file_path)
+        # print(f"\n\nDeleting {file_path}")
+        # os.remove(file_path)
+        print("test")
     else:
         print(f"Not deleted, debug is turned on!")
 
