@@ -2,6 +2,7 @@ import os
 import re
 
 from file_utils import is_valid_csv_file
+from db_operations import load_categories
 
 skip = {
     "Skip": [
@@ -15,10 +16,6 @@ skip = {
         ".*Sparekonto.*",
     ],
 }
-
-
-# define the categories
-# ".*WORD.*" this is the format
 
 # create a dictionary to store the totals for each category
 totals = {
@@ -38,6 +35,10 @@ totals = {
 
 # create a list for unknown transactions
 unknown = []
+
+categories = load_categories()
+
+debug = True
 
 
 def get_file_name():
@@ -143,8 +144,11 @@ def main(file_path):
         print(f"Total for {category}: {total:.2f}".replace(".", ","))
 
     # Delete the CSV file
-    print(f"\n\nDeleting {file_path}")
-    os.remove(file_path)
+    if not (debug):
+        print(f"\n\nDeleting {file_path}")
+        os.remove(file_path)
+    else:
+        print(f"Not deleted, debug is turned on!")
 
 
 if __name__ == "__main__":
