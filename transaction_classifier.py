@@ -1,6 +1,6 @@
 import os
 import re
-
+import sqlite3
 
 from file_utils import is_valid_csv_file
 
@@ -118,32 +118,35 @@ def get_transactions(file_path):
     return transactions
 
 
-def classify_transactions(transactions, categories, totals, skip):
+def classify_transactions(transactions, cursor):
     unknown = []
     for merchant, amount in transactions:
         found = False
 
-        # First, check the skip dictionary
-        for skip_category, skip_merchants in skip.items():
-            for skip_merchant in skip_merchants:
-                pattern = re.compile(skip_merchant, flags=re.IGNORECASE)
+        # Fetch all categories and their associated patterns
+        cursor.execute("SELECT * FROM categories")
+        categories = cursor.fetchall()
+
+        for category in categories:
+            category_id, category_name = category
+
+            # Fetch the patterns associated with the current category
+            cursor.execute(
+                "SELECT pattern FROM patterns WHERE category_id = ?", (category_id,)
+            )
+            patterns = cursor.fetchall()
+
+            for pattern in patterns:
+                # Form the regex pattern
+                pattern = re.compile(f".*{pattern[0]}.*", flags=re.IGNORECASE)
+
                 if pattern.match(merchant):
                     found = True
+                    totals[category_name] += amount
                     break
+
             if found:
                 break
-
-        # If the transaction was not skipped, try to categorize it
-        if not found:
-            for category, merchants in categories.items():
-                for merchant_name in merchants:
-                    pattern = re.compile(merchant_name, flags=re.IGNORECASE)
-                    if pattern.match(merchant):
-                        found = True
-                        totals[category] += amount
-                        break
-                if found:
-                    break
 
         # Add the transaction to the unknown list if it was neither skipped nor categorized
         if not found:
