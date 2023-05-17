@@ -1,8 +1,9 @@
 import os
 import re
 
-
 from file_utils import is_valid_csv_file
+from db.db_operations import load_categories
+from db.add_pattern_to_db import add_pattern_to_db
 
 skip = {
     "Skip": [
@@ -15,59 +16,6 @@ skip = {
         ".*Aksjesparekonto.*",
         ".*Sparekonto.*",
     ],
-}
-
-
-# define the categories
-# ".*WORD.*" this is the format
-categories = {
-    "Food and Groceries": [
-        ".*REMA.*",
-        ".*BUNNPRIS.*",
-        ".*COOP.*",
-        ".*Meny.*",
-        ".*EXTRA.*",
-        ".*TooGoodToG.*",
-        ".*Spar.*",
-    ],
-    "Snacks/Convenience": [
-        ".*Integrerbar.*",
-        ".*Dominos.*",
-        ".*VINMONOPOLET.*",
-        ".*VOITECHNOLO.*",
-        ".*COCA-COLA ENTERPRISE.*",
-        ".*STUD.KAFÈ.*",
-        ".*FOODORA.*",
-        ".*Kaffibar.*",
-    ],
-    "Entertainment": [
-        ".*BERGEN KINO.*",
-        ".*NETFLIX.*",
-        ".*TWITCHINTER.*",
-        ".*DISNEYPLUS.*",
-        ".*VALVE.*",
-        ".*NINTENDO.*",
-        ".*STEAM.*",
-    ],
-    "Electronic": [".*Komplett.*"],
-    "Internett": [".*internett.*"],
-    "Clothes": [".*DRESSMANN.*"],
-    "Body care and medicine": [
-        ".*APOTEK.*",
-        ".*Farmasiet.*",
-        ".*LEGESENTERET.*",
-        ".*Tannhelse.*",
-    ],
-    "Transportation": [
-        ".*Ryde Technology AS.*",
-        ".*Skyss.*",
-        ".*Ryde.*",
-        ".*VOISCOOTERS.*",
-    ],
-    "Housing": ["VARMEREGNING.*", "HUSLEIE.*", ".*bo.sammen.no.*"],
-    "Other expenses": [".*TEKNA.*", ".*TILE.*", ".*SPOTIFY.*"],
-    "Other": [],
-    "Income": [],
 }
 
 # create a dictionary to store the totals for each category
@@ -88,6 +36,10 @@ totals = {
 
 # create a list for unknown transactions
 unknown = []
+
+categories = load_categories()
+
+debug = True
 
 
 def get_file_name():
@@ -126,7 +78,7 @@ def classify_transactions(transactions, categories, totals, skip):
         # First, check the skip dictionary
         for skip_category, skip_merchants in skip.items():
             for skip_merchant in skip_merchants:
-                pattern = re.compile(skip_merchant, flags=re.IGNORECASE)
+                pattern = re.compile(f".*{skip_merchant}.*", flags=re.IGNORECASE)
                 if pattern.match(merchant):
                     found = True
                     break
@@ -137,7 +89,7 @@ def classify_transactions(transactions, categories, totals, skip):
         if not found:
             for category, merchants in categories.items():
                 for merchant_name in merchants:
-                    pattern = re.compile(merchant_name, flags=re.IGNORECASE)
+                    pattern = re.compile(f".*{merchant_name}.*", flags=re.IGNORECASE)
                     if pattern.match(merchant):
                         found = True
                         totals[category] += amount
@@ -181,6 +133,19 @@ def main(file_path):
             categories[selected_category].append(merchant)
             totals[selected_category] += amount
 
+            # ask the user if they want to add the merchant to the skip list
+            add_to_skip = input(
+                f"Do you want to add '{merchant}' to the skip list? (y/n): "
+            )
+            if add_to_skip.lower() == "y":
+                skip["Skip"].append(merchant)
+                print(f"'{merchant}' has been added to the skip list.")
+
+                # Ask the user if they want to add the merchant to the database
+                db_name = input("What would you like to name it in the database?: ")
+                category_id = choice  # The ID of the selected category
+                add_pattern_to_db(db_name, category_id)
+
     # print the updated totals
     print(f"\n\n Updated totals:")
     for category, total in totals.items():
@@ -188,8 +153,12 @@ def main(file_path):
         print(f"Total for {category}: {total:.2f}".replace(".", ","))
 
     # Delete the CSV file
-    print(f"\n\nDeleting {file_path}")
-    os.remove(file_path)
+    if not (debug):
+        # print(f"\n\nDeleting {file_path}")
+        # os.remove(file_path)
+        print("test")
+    else:
+        print(f"Not deleted, debug is turned on!")
 
 
 if __name__ == "__main__":
