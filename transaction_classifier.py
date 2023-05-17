@@ -135,11 +135,16 @@ def main(file_path):
 
             # ask the user if they want to add the merchant to the skip list
             add_to_skip = input(
-                f"Do you want to add '{merchant}' to the skip list? (yes/no): "
+                f"Do you want to add '{merchant}' to the skip list? (y/n): "
             )
-            if add_to_skip.lower() == "yes":
+            if add_to_skip.lower() == "y":
                 skip["Skip"].append(merchant)
                 print(f"'{merchant}' has been added to the skip list.")
+
+                # Ask the user if they want to add the merchant to the database
+                db_name = input("What would you like to name it in the database?: ")
+                category_id = choice  # The ID of the selected category
+                add_pattern_to_db(db_name, category_id)
 
     # print the updated totals
     print(f"\n\n Updated totals:")

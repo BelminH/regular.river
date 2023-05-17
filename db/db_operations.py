@@ -7,7 +7,7 @@ def load_categories():
     categories = {}
 
     # Connect to the SQLite database
-    conn = sqlite3.connect("categories.db")
+    conn = sqlite3.connect("db/categories.db")
 
     # Create a cursor object
     cursor = conn.cursor()

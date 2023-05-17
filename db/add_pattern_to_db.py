@@ -2,7 +2,7 @@ import sqlite3
 
 
 def add_pattern_to_db(pattern, category_id):
-    conn = sqlite3.connect("transactions.db")
+    conn = sqlite3.connect("db/categories.db")
     cursor = conn.cursor()
     cursor.execute(
         """
