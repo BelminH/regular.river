@@ -2,16 +2,25 @@
 [![codecov](https://codecov.io/gh/BelminH/regular.river/branch/main/graph/badge.svg?token=6PXAPSIOCI)](https://codecov.io/gh/BelminH/regular.river)
 [![Python CI](https://github.com/BelminH/regular.river/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BelminH/regular.river/actions/workflows/build.yml)
 
-## Auto bank 
+# Auto Bank 
 
-This is a Python script that reads a CSV file with bank transactions and categorizes them based on regular expressions. It then displays the total amount for each category and prompts the user to categorize any unknown transactions.
-Installation
+Auto Bank is a Python script designed to automate the categorization of bank transactions. It reads a CSV file containing bank transactions, categorizes them based on predefined regular expressions, and displays the total amounts for each category. For transactions that don't match any existing categories, it provides an interactive interface for the user to categorize these transactions manually.
 
-    Clone the repository to your local machine.
+## Installation
 
-#### Usage
- 
-    Run the script by running python main.py.
-    Enter the file path for the CSV file when prompted.
-    The script will categorize the transactions and display the totals for each category.
-    If there are any unknown transactions, the script will prompt the user to categorize them. 
+1. Clone the repository to your local machine using the following command:
+`git clone git@github.com:BelminH/regular.river.git`
+2. Navigate to the cloned directory:
+`python --version`
+If Python 3 is not installed, please refer to the official Python documentation for installation instructions.
+
+## Usage
+
+To run the script, follow the steps below:
+
+1. Run the script using Python:
+`python transaction_classifier.py`
+
+2. When prompted, enter the file path for the CSV file that contains the bank transactions.
+
+The script will then categorize the transactions and display the totals for each category. If there are any unknown transactions, the script will prompt the user to manually categorize them.
