@@ -33,12 +33,26 @@ jobs:
 #          pip install pre-commit
 #      - name: Run pre-commit
 #        run: pre-commit run --all-files
-      - name: Test with pytest and coverage
+#      - name: Test with pytest and coverage
+#        run: |
+#          pytest tests/ --cov=file_utils --cov=transaction_classifier --cov-report=xml:coverage.xml
+#      - name: Upload coverage to Codecov
+#        uses: codecov/codecov-action@v3
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
+#          files: ./coverage.xml
+#          fail_ci_if_error: false
+      - name: Generate Report
         run: |
-          pytest tests/ --cov=file_utils --cov=transaction_classifier --cov-report=xml:coverage.xml
+          pip install codecov
+          pip install pytest-cov
+          pytest --cov=./ --cov-report=xml
+          codecov
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v3.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.xml
-          fail_ci_if_error: false
+          directory: ./coverage/reports/
+          env_vars: OS,PYTHON
+          files: /home/runner/work/SIESTAstepper/SIESTAstepper/coverage.xml
+          flags: tests
