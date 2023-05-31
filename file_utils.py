@@ -1,5 +1,6 @@
 import os
 import csv
+from datetime import datetime
 
 
 def is_valid_csv_file(file_path):
@@ -23,38 +24,22 @@ def rename_csv_file(file_path):
     Returns:
         new_file_path (str): The path to the renamed CSV file.
     """
-    # Create a dictionary that maps the month number to the month name
-    month_names = {
-        "01": "jan",
-        "02": "feb",
-        "03": "mar",
-        "04": "apr",
-        "05": "may",
-        "06": "jun",
-        "07": "jul",
-        "08": "aug",
-        "09": "sep",
-        "10": "oct",
-        "11": "nov",
-        "12": "dec"
-    }
-
     with open(file_path, newline='', encoding="iso-8859-1") as f:
         reader = csv.reader(f, delimiter=';')
         next(reader)  # Skip the header
         row = next(reader)
         date = row[0].replace('"', '')  # Remove quotes
 
-    # Create new file name based on the date
-    day, month, year = date.split(".")
-    month_name = month_names.get(month, "unknown")
-    new_file_name = f"{month_name}{year}.csv"
+    # Parse the date and format the new file name
+    parsed_date = datetime.strptime(date, "%d.%m.%Y")
+    new_file_name = f"{parsed_date.strftime('%b').lower()}{parsed_date.year}.csv"
 
     # Rename the file
     new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
     os.rename(file_path, new_file_path)
 
     return new_file_path
+
 
 
 
