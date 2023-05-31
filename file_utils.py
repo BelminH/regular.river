@@ -23,6 +23,22 @@ def rename_csv_file(file_path):
     Returns:
         new_file_path (str): The path to the renamed CSV file.
     """
+    # Create a dictionary that maps the month number to the month name
+    month_names = {
+        "01": "jan",
+        "02": "feb",
+        "03": "mar",
+        "04": "apr",
+        "05": "may",
+        "06": "jun",
+        "07": "jul",
+        "08": "aug",
+        "09": "sep",
+        "10": "oct",
+        "11": "nov",
+        "12": "dec"
+    }
+
     with open(file_path, newline='', encoding="iso-8859-1") as f:
         reader = csv.reader(f, delimiter=';')
         next(reader)  # Skip the header
@@ -30,14 +46,16 @@ def rename_csv_file(file_path):
         date = row[0].replace('"', '')  # Remove quotes
 
     # Create new file name based on the date
-    month, day, year = date.split(".")
-    new_file_name = f"{year}.{month}.csv"
+    day, month, year = date.split(".")
+    month_name = month_names.get(month, "unknown")
+    new_file_name = f"{month_name}{year}.csv"
 
     # Rename the file
     new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
     os.rename(file_path, new_file_path)
 
     return new_file_path
+
 
 
 def scan_folder_for_csv(folder_path):

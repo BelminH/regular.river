@@ -181,5 +181,15 @@ def main(directory_path, csv_files):
 if __name__ == "__main__":
     directory_path = get_folder_path()
     csv_files = scan_folder_for_csv(directory_path)
-    main(directory_path, csv_files)
+
+    # Rename all CSV files within the directory
+    renamed_csv_files = []
+    for csv_file in csv_files:
+        full_path = os.path.join(directory_path, csv_file)
+        new_file_path = rename_csv_file(full_path)
+        renamed_csv_files.append(os.path.basename(new_file_path))
+
+    # Process the renamed CSV files
+    main(directory_path, renamed_csv_files)
+
 
