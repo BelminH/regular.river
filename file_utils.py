@@ -38,3 +38,38 @@ def rename_csv_file(file_path):
     os.rename(file_path, new_file_path)
 
     return new_file_path
+
+
+def scan_folder_for_csv(folder_path):
+    """
+    Scans the specified folder for non-CSV files.
+
+    Args:
+        folder_path (str): The path to the folder to scan.
+
+    Returns:
+        non_csv_files (list): A list of the names of non-CSV files in the folder.
+    """
+    non_csv_files = []
+
+    for filename in os.listdir(folder_path):
+        if filename.lower().endswith(".csv"):
+            non_csv_files.append(filename)
+
+    return non_csv_files
+
+
+def get_folder_path():
+    while True:
+        folder_path = input("Enter the folder path: ")
+        if not os.path.exists(folder_path):
+            print(f"{folder_path} does not exist, try again")
+        elif not os.path.isdir(folder_path):
+            print(f"{folder_path} is not a folder, try again")
+        else:
+            non_csv_files = scan_folder_for_csv(folder_path)
+            if non_csv_files:
+                print("The following CSV files were found:")
+                for filename in non_csv_files:
+                    print(f"- {filename}")
+            return folder_path

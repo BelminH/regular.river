@@ -1,7 +1,8 @@
 import os
 import re
 
-from file_utils import is_valid_csv_file, rename_csv_file
+import file_utils
+from file_utils import is_valid_csv_file, rename_csv_file, get_folder_path, scan_folder_for_csv
 from db.db_operations import load_categories
 from db.add_pattern_to_db import add_pattern_to_db
 
@@ -105,24 +106,38 @@ def classify_transactions(transactions, categories, totals, skip):
     return unknown
 
 
-def main(file_path):
-    transactions = get_transactions(file_path)
-    unknown = classify_transactions(transactions, categories, totals, skip)
+def main(directory_path, csv_files):
+    unknown_transactions = []  # A list to store unknown transactions from all files
 
-    # print the totals for each category
-    for category, total in totals.items():
-        print(f"- {category}: {total:.2f}".replace(".", ","))
+    for csv_file in csv_files:
+        try:
+            full_path = os.path.join(directory_path, csv_file)
+            print(f"\nProcessing file: {full_path}")
+            transactions = get_transactions(full_path)
+            unknown = classify_transactions(transactions, categories, totals, skip)
 
-    # print the unknown transactions
-    print(f"\n There was({len(unknown)}) unknown transactions:")
-    for merchant, amount in unknown:
-        print(f"- {merchant}: {amount:.2f}")
+            # Store unknown transactions from current file
+            for merchant, amount in unknown:
+                unknown_transactions.append((csv_file, merchant, amount))
+        except Exception as e:
+            print(f"An error occurred while processing {csv_file}: {str(e)}")
+        finally:
+            print(f"Finished processing without errors on file {csv_file}")
+
+        # print the totals for each category
+        for category, total in totals.items():
+            print(f"- {category}: {total:.2f}".replace(".", ","))
+
+        # print the unknown transactions
+        print(f"\n There was({len(unknown)}) unknown transactions:")
+        for merchant, amount in unknown:
+            print(f"- {merchant}: {amount:.2f}")
 
     # ask the user where to add the unknown transactions
-    if unknown:
-        for merchant, amount in unknown:
+    if unknown_transactions:
+        for csv_file, merchant, amount in unknown_transactions:
             print(
-                f"\nWhere do you want to add the transaction for '{merchant}' with the amount {amount}?"
+                f"\nWhere do you want to add the transaction for '{merchant}' from file '{csv_file}' with the amount {amount}?"
             )
             for i, category in enumerate(categories, start=1):
                 print(f"{i}. {category}")
@@ -155,13 +170,16 @@ def main(file_path):
 
     # Delete the CSV file
     if not debug:
-        # print(f"\n\nDeleting {file_path}")
-        # os.remove(file_path)
-        print(f"{file_path} got deleted")
+        for csv_file in csv_files:
+            full_path = os.path.join(directory_path, csv_file)
+            print(f"\n\nDeleting {full_path}")
+            os.remove(full_path)
     else:
         print(f"Not deleted, debug is turned on!")
 
 
 if __name__ == "__main__":
-    file_path = get_file_name()
-    main(file_path)
+    directory_path = get_folder_path()
+    csv_files = scan_folder_for_csv(directory_path)
+    main(directory_path, csv_files)
+
