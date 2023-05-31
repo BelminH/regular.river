@@ -1,6 +1,5 @@
-import os
 import tempfile
-import pytest
+
 from file_utils import is_valid_csv_file
 
 

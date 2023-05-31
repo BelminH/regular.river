@@ -1,10 +1,9 @@
 import os
 import re
 
-import file_utils
-from file_utils import is_valid_csv_file, rename_csv_file, get_folder_path, scan_folder_for_csv
-from db.db_operations import load_categories
 from db.add_pattern_to_db import add_pattern_to_db
+from db.db_operations import load_categories
+from file_utils import is_valid_csv_file, rename_csv_file, get_folder_path, scan_folder_for_csv
 
 skip = {
     "Skip": [
