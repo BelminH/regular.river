@@ -1,7 +1,7 @@
 import os
 import re
 
-from file_utils import is_valid_csv_file
+from file_utils import is_valid_csv_file, rename_csv_file
 from db.db_operations import load_categories
 from db.add_pattern_to_db import add_pattern_to_db
 
@@ -51,12 +51,13 @@ def get_file_name():
             print(f"{file_path} is not a CSV file, try again")
         else:
             print(f"{file_path} is a CSV file")
-            return file_path
+            print(f"Staring the program...\n\n")
+            return rename_csv_file(file_path)
 
 
-def get_transactions(file_path):
+def get_transactions(file_name):
     transactions = []
-    with open(file=file_path, encoding="iso-8859-1") as file:
+    with open(file=file_name, encoding="iso-8859-1") as file:
         next(file)  # skip the header line
         for line in file:
             columns = line.strip().split(";")
@@ -153,10 +154,10 @@ def main(file_path):
         print(f"Total for {category}: {total:.2f}".replace(".", ","))
 
     # Delete the CSV file
-    if not (debug):
+    if not debug:
         # print(f"\n\nDeleting {file_path}")
         # os.remove(file_path)
-        print("test")
+        print(f"{file_path} got deleted")
     else:
         print(f"Not deleted, debug is turned on!")
 
