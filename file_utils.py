@@ -24,11 +24,11 @@ def rename_csv_file(file_path):
     Returns:
         new_file_path (str): The path to the renamed CSV file.
     """
-    with open(file_path, newline='', encoding="iso-8859-1") as f:
-        reader = csv.reader(f, delimiter=';')
+    with open(file_path, newline="", encoding="iso-8859-1") as f:
+        reader = csv.reader(f, delimiter=";")
         next(reader)  # Skip the header
         row = next(reader)
-        date = row[0].replace('"', '')  # Remove quotes
+        date = row[0].replace('"', "")  # Remove quotes
 
     # Parse the date and format the new file name
     parsed_date = datetime.strptime(date, "%d.%m.%Y")
@@ -39,8 +39,6 @@ def rename_csv_file(file_path):
     os.rename(file_path, new_file_path)
 
     return new_file_path
-
-
 
 
 def scan_folder_for_csv(folder_path):

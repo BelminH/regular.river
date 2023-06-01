@@ -3,7 +3,12 @@ import re
 
 from db.add_pattern_to_db import add_pattern_to_db
 from db.db_operations import load_categories
-from file_utils import is_valid_csv_file, rename_csv_file, get_folder_path, scan_folder_for_csv
+from file_utils import (
+    is_valid_csv_file,
+    rename_csv_file,
+    get_folder_path,
+    scan_folder_for_csv,
+)
 
 skip = {
     "Skip": [
@@ -190,5 +195,3 @@ if __name__ == "__main__":
 
     # Process the renamed CSV files
     main(directory_path, renamed_csv_files)
-
-
