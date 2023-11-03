@@ -15,7 +15,7 @@ Auto Bank is a Python script designed to automate the categorization of bank tra
 `python --version`
 If Python 3 is not installed, please refer to the official Python documentation for installation instructions.
 
-## Usage
+## Usage 
 
 To run the script, follow the steps below:
 
