@@ -1,6 +1,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/belminh/regular.river/badge?s=6873e2cbbb77353bb89fe4c11ddb60d0ab270b58)](https://www.codefactor.io/repository/github/belminh/regular.river)
 [![codecov](https://codecov.io/gh/BelminH/regular.river/branch/main/graph/badge.svg?token=6PXAPSIOCI)](https://codecov.io/gh/BelminH/regular.river)
 [![Python CI](https://github.com/BelminH/regular.river/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BelminH/regular.river/actions/workflows/build.yml)
+[![Qodana](https://github.com/BelminH/regular.river/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/BelminH/regular.river/actions/workflows/qodana_code_quality.yml)
 
 # Auto Bank 
 
