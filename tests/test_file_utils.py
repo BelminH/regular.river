@@ -1,6 +1,6 @@
 import tempfile
 
-from file_utils import is_valid_csv_file
+from helpers.file_utils import is_valid_csv_file
 
 
 def test_is_csv_file():

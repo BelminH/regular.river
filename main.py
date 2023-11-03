@@ -1,20 +1,22 @@
 import os
 import re
 
-from db.add_pattern_to_db import add_pattern_to_db
-from db.db_operations import load_categories
-from file_utils import (
+from db.database_manager import DatabaseManager
+
+from helpers.file_utils import (
     is_valid_csv_file,
     rename_csv_file,
     get_folder_path,
     scan_folder_for_csv,
 )
 
-from static_data import __SKIP, __TOTALS
+from helpers.static_data import __SKIP, __TOTALS
+
+db_manager = DatabaseManager("db/categories.db")
 
 unknown = []
 
-categories = load_categories()
+categories = db_manager.load_categories()
 
 debug = True
 
@@ -154,7 +156,7 @@ def handle_unknown_transactions(unknown_transactions):
                 # Ask the user if they want to add the merchant to the database
                 db_name = input("What would you like to name it in the database?: ")
                 category_id = choice  # The ID of the selected category
-                add_pattern_to_db(db_name, category_id)
+                db_manager.add_pattern_to_db(db_name, category_id)
 
 
 # TODO replace this with google api sheets
