@@ -76,5 +76,6 @@ categories = {
     "Housing": ["VARMEREGNING", "HUSLEIE", "bo.sammen.no"],
     "Other expenses": ["TEKNA", "TILE", "SPOTIFY"],
     "Other": [],
+    "Savings": [],
     "Income": [],
 }
