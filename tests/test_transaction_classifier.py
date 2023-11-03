@@ -1,4 +1,4 @@
-from transaction_classifier import classify_transactions
+from main import classify_transactions
 
 
 def test_classify_transactions(default_dicts):

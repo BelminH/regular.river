@@ -49,15 +49,15 @@ def scan_folder_for_csv(folder_path):
         folder_path (str): The path to the folder to scan.
 
     Returns:
-        non_csv_files (list): A list of the names of non-CSV files in the folder.
+        csv_files (list): A list of the names of non-CSV files in the folder.
     """
-    non_csv_files = []
+    csv_files = []
 
     for filename in os.listdir(folder_path):
         if filename.lower().endswith(".csv"):
-            non_csv_files.append(filename)
+            csv_files.append(filename)
 
-    return non_csv_files
+    return csv_files
 
 
 def get_folder_path():

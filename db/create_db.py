@@ -1,13 +1,11 @@
 import sqlite3
 
 try:
-    # Create a new SQLite database (or connect to it if it already exists)
+    # create a new SQLite database (or connect to it if it already exists)
     conn = sqlite3.connect("categories.db")
-
-    # Create a cursor object
     cursor = conn.cursor()
 
-    # Create a new table named 'categories'
+    # new table named 'categories'
     cursor.execute(
         """
         CREATE TABLE categories (
@@ -17,7 +15,7 @@ try:
     """
     )
 
-    # Create a new table named 'patterns'
+    # new table named 'patterns'
     cursor.execute(
         """
         CREATE TABLE patterns (
