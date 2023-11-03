@@ -17,7 +17,7 @@ __TOTALS = {
     "Snacks/Convenience": 0,
     "Entertainment": 0,
     "Electronic": 0,
-    "Internett": 0,
+    "Internet": 0,
     "Clothes": 0,
     "Body care and medicine": 0,
     "Transportation": 0,
@@ -28,6 +28,7 @@ __TOTALS = {
     "Income": 0,
 }
 
+# pre configures categories that will always load into the db (if they're not already there)
 categories = {
     "Food and Groceries": [
         "REMA",

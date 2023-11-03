@@ -19,7 +19,7 @@ If Python 3 is not installed, please refer to the official Python documentation 
 To run the script, follow the steps below:
 
 1. Run the script using Python:
-`python transaction_classifier.py`
+`python main.py`
 
 2. When prompted, enter the file path for the CSV file that contains the bank transactions.
 
