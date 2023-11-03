@@ -122,6 +122,9 @@ class DatabaseManager:
 
         :param pattern: The pattern to be added.
         :param category_id: The ID of the category.
+
+        Args:
+            category_name:
         """
         with self._connect() as conn:
             cursor = conn.cursor()
