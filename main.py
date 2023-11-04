@@ -11,11 +11,8 @@ from helpers.file_utils import (
 from helpers.static_data import __SKIP  # , __TOTALS
 
 db_manager = DatabaseManager("db/categories.db")
-
 unknown = []
-
 categories = db_manager.load_categories()
-
 debug = False
 
 
