@@ -11,9 +11,7 @@ from helpers.file_utils import (
 from helpers.static_data import __SKIP
 
 db_manager = DatabaseManager("db/categories.db")
-unknown = []
 categories = db_manager.load_categories()
-debug = False
 
 
 def get_file_name():
@@ -189,6 +187,7 @@ def delete_files(dir_path, files):
 
 
 def main(dir_path, files):
+    debug = False
     all_unknown_transactions, all_totals = process_all_files(dir_path, files)
     for unknown_transactions, totals in zip(all_unknown_transactions, all_totals):
         handle_unknown_transactions(unknown_transactions, totals)
