@@ -1,9 +1,7 @@
 import os
 import re
-from datetime import datetime
 
 from db.database_manager import DatabaseManager
-
 from helpers.file_utils import (
     is_valid_csv_file,
     rename_csv_file,
