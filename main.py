@@ -44,8 +44,10 @@ def get_transactions(file_name):
         next(file)  # skip the header line
         for line in file:
             columns = line.strip().split(";")
-            merchant = columns[3].strip()
-            amount = columns[4].strip()
+            # merchant = columns[3].strip()
+            # amount = columns[4].strip()
+            merchant = columns[5].strip()
+            amount = columns[1].strip()
             amount = amount.replace('"', "")
             amount = amount.replace(".", "")
             amount = amount.replace(",", ".")
