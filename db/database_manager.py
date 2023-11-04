@@ -125,6 +125,7 @@ class DatabaseManager:
 
         Args:
             category_name:
+            category_name:
         """
         with self._connect() as conn:
             cursor = conn.cursor()
