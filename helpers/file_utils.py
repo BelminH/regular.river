@@ -31,7 +31,7 @@ def rename_csv_file(file_path):
         date = row[0].replace('"', "")  # Remove quotes
 
     # Parse the date and format the new file name
-    parsed_date = datetime.strptime(date, "%Y/%m/%d") # nordea uses '/'
+    parsed_date = datetime.strptime(date, "%Y/%m/%d")  # nordea uses '/'
 
     new_file_name = f"{parsed_date.strftime('%b').lower()}{parsed_date.year}.csv"
 

@@ -92,7 +92,9 @@ def classify_transactions(transactions, category_dict, totals, skip):
 def process_file(file_path):
     print(f"\nProcessing file: {file_path}")
     transactions = get_transactions(file_path)
-    totals = {category: 0 for category in categories}  # Initialize a new totals dictionary
+    totals = {
+        category: 0 for category in categories
+    }  # Initialize a new totals dictionary
     to_be_categorized = classify_transactions(transactions, categories, totals, __SKIP)
     print(f"Totals in process_file: {totals}")
 
@@ -109,16 +111,21 @@ def process_file(file_path):
 
 
 def process_all_files(dir_path, file):
-    all_unknown_transactions = []  # A list to store lists of unknown transactions from all files
+    all_unknown_transactions = (
+        []
+    )  # A list to store lists of unknown transactions from all files
     all_totals = []  # A list to store totals dictionaries from all files
 
     for i in file:
         try:
             file_path = os.path.join(dir_path, i)
-            unknown_transactions, totals = process_file(file_path)  # Get totals from process_file
+            unknown_transactions, totals = process_file(
+                file_path
+            )  # Get totals from process_file
 
             all_unknown_transactions.append(
-                unknown_transactions)  # Append list of unknown transactions to all_unknown_transactions
+                unknown_transactions
+            )  # Append list of unknown transactions to all_unknown_transactions
             all_totals.append(totals)  # Append totals dictionary to all_totals list
         except Exception as e:
             print(f"An error occurred while processing {i}: {str(e)}")
@@ -205,7 +212,9 @@ def main(dir_path, files):
     all_unknown_transactions, all_totals = process_all_files(dir_path, files)
     for unknown_transactions, totals in zip(all_unknown_transactions, all_totals):
         handle_unknown_transactions(unknown_transactions, totals)
-        print("\nUpdated totals for file {}:".format(unknown_transactions[0][0]))  # Corrected line
+        print(
+            "\nUpdated totals for file {}:".format(unknown_transactions[0][0])
+        )  # Corrected line
         print_totals(totals)  # Print the totals for the current file
 
     if not debug:
