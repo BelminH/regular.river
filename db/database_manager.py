@@ -165,7 +165,6 @@ class DatabaseManager:
             )
 
 
-# Usage:
 if __name__ == "__main__":
     db_manager = DatabaseManager(
         "C:/Users/belmi/Documents/regular.river/db/categories.db"

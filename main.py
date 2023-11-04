@@ -8,7 +8,7 @@ from helpers.file_utils import (
     get_folder_path,
     scan_folder_for_csv,
 )
-from helpers.static_data import __SKIP  # , __TOTALS
+from helpers.static_data import __SKIP
 
 db_manager = DatabaseManager("db/categories.db")
 unknown = []
@@ -39,10 +39,7 @@ def get_transactions(file_name):
         next(file)  # skip the header line
         for line in file:
             columns = line.strip().split(";")
-            # merchant = columns[3].strip()
-            # amount = columns[4].strip()
-            merchant = columns[5].strip()
-            amount = columns[1].strip()
+            merchant, amount = columns[5].strip(), columns[1].strip()
             amount = amount.replace('"', "")
             amount = amount.replace(".", "")
             amount = amount.replace(",", ".")
@@ -52,12 +49,11 @@ def get_transactions(file_name):
 
 
 def classify_transactions(transactions, category_dict, totals, skip):
-    print(f"Initial totals in classify_transactions: {totals}")  # Debugging line
     unmatched_transactions = []
     for merchant, amount in transactions:
         found = False
 
-        # First, check the skip dictionary
+        # check the skip dictionary first
         for skip_category, skip_merchants in skip.items():
             for skip_merchant in skip_merchants:
                 pattern = re.compile(f".*{skip_merchant}.*", flags=re.IGNORECASE)
@@ -67,7 +63,7 @@ def classify_transactions(transactions, category_dict, totals, skip):
             if found:
                 break
 
-        # If the transaction was not skipped, try to categorize it
+        # if the transaction was not skipped, try to categorize it
         if not found:
             for category, merchants in category_dict.items():
                 for merchant_name in merchants:
@@ -81,11 +77,10 @@ def classify_transactions(transactions, category_dict, totals, skip):
                 if found:
                     break
 
-        # Add the transaction to the unknown list if it was neither skipped nor categorized
+        # add the transaction to the unknown list if it was neither skipped nor categorized
         if not found:
             unmatched_transactions.append((merchant, amount))
 
-    print(f"Final totals in classify_transactions: {totals}")  # Debugging line
     return unmatched_transactions
 
 
@@ -94,17 +89,17 @@ def process_file(file_path):
     transactions = get_transactions(file_path)
     totals = {
         category: 0 for category in categories
-    }  # Initialize a new totals dictionary
+    }  # initialize a new totals dictionary
     to_be_categorized = classify_transactions(transactions, categories, totals, __SKIP)
     print(f"Totals in process_file: {totals}")
 
-    # Store unknown transactions from current file
+    # store unknown transactions from current file
     unknown_transactions = [
         (file_path, merchant, amount) for merchant, amount in to_be_categorized
     ]
 
     print("Updated totals:")
-    print_totals(totals)  # Print the totals for the current file
+    print_totals(totals)  # print the totals for the current file at the end
     print("End of process_file function")
 
     return unknown_transactions, totals
@@ -113,20 +108,20 @@ def process_file(file_path):
 def process_all_files(dir_path, file):
     all_unknown_transactions = (
         []
-    )  # A list to store lists of unknown transactions from all files
-    all_totals = []  # A list to store totals dictionaries from all files
+    )  # list to store lists of unknown transactions from all files
+    all_totals = []  # list to store totals dictionaries from all files
 
     for i in file:
         try:
             file_path = os.path.join(dir_path, i)
             unknown_transactions, totals = process_file(
                 file_path
-            )  # Get totals from process_file
+            )  # get totals from process_file
 
             all_unknown_transactions.append(
                 unknown_transactions
-            )  # Append list of unknown transactions to all_unknown_transactions
-            all_totals.append(totals)  # Append totals dictionary to all_totals list
+            )  # append list of unknown transactions to all_unknown_transactions
+            all_totals.append(totals)  # append totals dictionary to all_totals list
         except Exception as e:
             print(f"An error occurred while processing {i}: {str(e)}")
         finally:
@@ -144,13 +139,13 @@ def handle_unknown_transactions(unknown_transactions, totals):
             for i, category in enumerate(categories, start=1):
                 print(f"{i}. {category}")
 
-            # Validate the category choice input
+            # validate the category choice input
             while True:
                 choice_input = input("Enter the number of the category: ")
                 try:
                     choice = int(choice_input)
                     if 1 <= choice <= len(categories):
-                        break  # Exit the while loop if a valid choice is received
+                        break  # exit the while loop if a valid choice is received
                     else:
                         print(
                             f"Invalid choice, please enter a number between 1 and {len(categories)}"
@@ -158,20 +153,20 @@ def handle_unknown_transactions(unknown_transactions, totals):
                 except ValueError:
                     print(f"Invalid input, please enter a number")
 
-            # Get the selected category
+            # get the selected category
             selected_category = list(categories.keys())[choice - 1]
 
-            # Add the unknown transactions to the selected category
+            # add the unknown transactions to the selected category
             categories[selected_category].append(merchant)
             totals[selected_category] += amount
 
-            # Ask the user if they want to add the merchant to the database
-            add_to_db = input(
+            # ask the user if they want to add the merchant to the database
+            add_to_db = str.lower(input(
                 f"Do you want to add '{merchant}' to the database? (y/n): "
-            )
+            ))
             if add_to_db.lower() == "y":
                 db_name = input("What would you like to name it in the database?: ")
-                category_id = choice  # The ID of the selected category
+                category_id = choice  # the ID of the selected category
                 db_manager.add_pattern_to_db(db_name, category_id)
                 print(
                     f"'{db_name}' has been added to the database under category {selected_category}."
@@ -179,7 +174,7 @@ def handle_unknown_transactions(unknown_transactions, totals):
 
 
 # TODO replace this with google api sheets later on
-def print_totals(totals):  # Modify this function to match your desired format
+def print_totals(totals):
     print("In print_totals function:")
     for category, total in totals.items():
         formatted_total = f"{total:.2f}".replace(".", ",")
@@ -187,25 +182,10 @@ def print_totals(totals):  # Modify this function to match your desired format
 
 
 def delete_files(dir_path, files):
-    for i in files:
-        file_path = os.path.join(dir_path, i)
+    for f in files:
+        file_path = os.path.join(dir_path, f)
         print(f"\n\nDeleting {file_path}")
         os.remove(file_path)
-
-
-def aggregate_and_print_totals(all_totals):
-    # Initialize a new dictionary to hold the aggregate totals
-    aggregate_totals = {category: 0 for category in categories}
-
-    # Loop through each totals dictionary and add the values to the aggregate totals
-    for totals in all_totals:
-        for category, total in totals.items():
-            aggregate_totals[category] += total
-
-    # Print the aggregate totals
-    print("\nAggregate totals:")
-    for category, total in aggregate_totals.items():
-        print(f"Total for {category}: {total:.2f}".replace(".", ","))
 
 
 def main(dir_path, files):
@@ -214,8 +194,9 @@ def main(dir_path, files):
         handle_unknown_transactions(unknown_transactions, totals)
         print(
             "\nUpdated totals for file {}:".format(unknown_transactions[0][0])
-        )  # Corrected line
-        print_totals(totals)  # Print the totals for the current file
+        )
+        # TODO check if does actually does something
+        print_totals(totals)  # print the totals for the current file, might not be needed
 
     if not debug:
         delete_files(dir_path, files)
@@ -227,12 +208,12 @@ if __name__ == "__main__":
     directory_path = get_folder_path()
     csv_files = scan_folder_for_csv(directory_path)
 
-    # Rename all CSV files within the directory
+    # rename all CSV files within the directory to the format monthyear.csv
     renamed_csv_files = []
     for csv_file in csv_files:
         full_path = os.path.join(directory_path, csv_file)
         new_file_path = rename_csv_file(full_path)
         renamed_csv_files.append(os.path.basename(new_file_path))
 
-    # Process the renamed CSV files
+    # process the renamed CSV files
     main(directory_path, renamed_csv_files)
