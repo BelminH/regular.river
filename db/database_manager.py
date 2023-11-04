@@ -121,10 +121,7 @@ class DatabaseManager:
         Adds a new pattern to the database with a specified category ID.
 
         :param pattern: The pattern to be added.
-        :param category_id: The ID of the category.
-
-        Args:
-            category_name:
+        :param category_name: The ID of the category.
         """
         with self._connect() as conn:
             cursor = conn.cursor()
@@ -143,7 +140,10 @@ class DatabaseManager:
         with self._connect() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO patterns (category_id, pattern) VALUES (?, ?)",
+                """
+                INSERT INTO patterns (category_id, pattern, created_at, updated_at)
+                VALUES (?, ?, datetime('now'), datetime('now', '+2 hours'))
+                """,
                 (category_id, pattern),
             )
 

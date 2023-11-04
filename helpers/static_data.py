@@ -8,6 +8,7 @@ __SKIP = {
         ".*Akademikerne.*",
         ".*Aksjesparekonto.*",
         ".*Sparekonto.*",
+        ".*BELMIN HUSANOVIC.*",
     ],
 }
 
@@ -26,6 +27,7 @@ __TOTALS = {
     "Other": 0,
     "Savings": 0,
     "Income": 0,
+    "Credit": 0,
 }
 
 # pre configures categories that will always load into the db (if they're not already there)
@@ -78,4 +80,5 @@ categories = {
     "Other": [],
     "Savings": [],
     "Income": [],
+    "Credit": [],
 }
