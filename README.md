@@ -27,7 +27,7 @@ To run the script, follow the steps below:
 The script will then categorize the transactions and display the totals for each category. If there are any unknown transactions, the script will prompt the user to manually categorize them.
 
 ## Note
-Currently the tested banks are Danske Bank, however. The script can be easily modified to work with other banks by changing the regular expressions in the `main.py` file.
+Currently the tested banks are Danske Bank and Nordea, however. The script can be easily modified to work with other banks by changing the regular expressions in the `main.py` file.
 For now the format are as follows:
 ```csv
 "Dato";"Kategori";"Underkategori";"Tekst";"Beløp";"Saldo";"Status";"Avstemt"
