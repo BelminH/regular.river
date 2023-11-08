@@ -8,7 +8,8 @@ __SKIP = {
         ".*Akademikerne.*",
         ".*Aksjesparekonto.*",
         ".*Sparekonto.*",
-        ".*BELMIN HUSANOVIC.*",
+        ".*FRA.*",
+        ".*TIL.*",
     ],
 }
 
