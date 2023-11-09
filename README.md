@@ -5,7 +5,7 @@
 
 ---
 
-# Regular River: Automated Bank Transaction Categorization
+# Transaction Tally: Automated Bank Transaction Categorization
 
 Regular River is a Python application that simplifies the management of bank transactions by automatically categorizing them into predefined groups. It processes a CSV file of transactions, applies regular expression-based rules, and tallies amounts by category, streamlining personal finance tracking.
 
@@ -35,8 +35,6 @@ The script automatically classifies each transaction and presents a summary of t
 1. **Installation**: Clone the repository and ensure Python 3 is set up.
 2. **Usage**: Run the script, provide your CSV file, and follow the interactive prompts.
 3. **Customization**: Adapt the script for different banks by editing the regex patterns.
-
-Remember to rename "Auto Bank" to a name that reflects its functionality more accurately, like "Transaction Tally" or "Finance Flow".
 
 ---
 
