@@ -3,32 +3,41 @@
 [![Python CI](https://github.com/BelminH/regular.river/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BelminH/regular.river/actions/workflows/build.yml)
 [![Qodana](https://github.com/BelminH/regular.river/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/BelminH/regular.river/actions/workflows/qodana_code_quality.yml)
 
-# Auto Bank 
+---
 
-Auto Bank is a Python script designed to automate the categorization of bank transactions. It reads a CSV file containing bank transactions, categorizes them based on predefined regular expressions, and displays the total amounts for each category. For transactions that don't match any existing categories, it provides an interactive interface for the user to categorize these transactions manually.
+# Regular River: Automated Bank Transaction Categorization
 
-## Installation
+Regular River is a Python application that simplifies the management of bank transactions by automatically categorizing them into predefined groups. It processes a CSV file of transactions, applies regular expression-based rules, and tallies amounts by category, streamlining personal finance tracking.
 
-1. Clone the repository to your local machine using the following command:
-`git clone git@github.com:BelminH/regular.river.git`
-2. Navigate to the cloned directory:
-`python --version`
-If Python 3 is not installed, please refer to the official Python documentation for installation instructions.
+## Quick Start
 
-## Usage 
-
-To run the script, follow the steps below:
-
-1. Run the script using Python:
-`python main.py`
-
-2. When prompted, enter the file path for the CSV file that contains the bank transactions.
-
-The script will then categorize the transactions and display the totals for each category. If there are any unknown transactions, the script will prompt the user to manually categorize them.
-
-## Note
-Currently the tested banks are Danske Bank and Nordea, however. The script can be easily modified to work with other banks by changing the regular expressions in the `main.py` file.
-For now the format are as follows:
-```csv
-"Dato";"Kategori";"Underkategori";"Tekst";"Beløp";"Saldo";"Status";"Avstemt"
+```bash
+git clone git@github.com:BelminH/regular.river.git
+cd regular.river
+python main.py
 ```
+
+## How It Works
+
+1. **Clone the Repository**: Use Git to clone and access the codebase.
+2. **Prepare Your Environment**: Ensure Python 3 is installed. If not, install it from the official Python website.
+3. **Run the Script**: Execute `main.py` and input the path to your CSV file when prompted.
+
+The script automatically classifies each transaction and presents a summary of totals for each category. Manual categorization is available for unclassified transactions.
+
+## Features
+
+- **Compatibility**: Currently supports Danske Bank* and Nordea formats.
+- **Flexibility**: Modify regular expressions in `main.py` for other bank formats.
+
+## Detailed Steps
+
+1. **Installation**: Clone the repository and ensure Python 3 is set up.
+2. **Usage**: Run the script, provide your CSV file, and follow the interactive prompts.
+3. **Customization**: Adapt the script for different banks by editing the regex patterns.
+
+Remember to rename "Auto Bank" to a name that reflects its functionality more accurately, like "Transaction Tally" or "Finance Flow".
+
+---
+
+- *You would need to change the position of the merchant and the amount for Danske Bank*
