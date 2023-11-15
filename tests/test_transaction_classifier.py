@@ -23,8 +23,6 @@ def test_classify_transactions_no_transactions(default_dicts):
     categories, totals, skip = default_dicts
     transactions = []
 
-    # ... (same categories, totals, and skip dictionaries as before)
-
     unknown = classify_transactions(transactions, categories, totals, skip)
 
     for total in totals.values():
@@ -40,7 +38,6 @@ def test_classify_transactions_all_unknown(default_dicts):
         ("Unknown Merchant 3", 45),
     ]
 
-    # ... (same categories, totals, and skip dictionaries as before)
 
     unknown = classify_transactions(transactions, categories, totals, skip)
 
@@ -57,7 +54,7 @@ def test_classify_transactions_all_skip(default_dicts):
         ("Sparekonto", 300),
     ]
 
-    # Modify the skip dictionary to have more specific patterns
+    # using the skip dicts to have more specific patterns for such as norwegian letters
     skip["Skip"].extend([".*Nettbank.*", ".*Overfï¿½ring.*", ".*Sparekonto.*"])
 
     unknown = classify_transactions(transactions, categories, totals, skip)
@@ -85,8 +82,6 @@ def test_classify_transactions_mixed(default_dicts):
         ("Overfï¿½ring", 200),
         ("Sparekonto", 300),
     ]
-
-    # ... (same categories, totals, and skip dictionaries as before)
 
     unknown = classify_transactions(transactions, categories, totals, skip)
 
