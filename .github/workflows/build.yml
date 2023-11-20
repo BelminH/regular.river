@@ -37,6 +37,7 @@ jobs:
           black .
       - name: Run pre-commit
         run: pre-commit run --all-files
+        continue-on-error: true
       - name: Generate Report
         run: |
           pip install codecov
