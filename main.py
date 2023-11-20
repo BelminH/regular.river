@@ -219,20 +219,23 @@ def update_sheet(totals):
         "November",
         "December",
     ]
-    month_to_column = {month: chr(66 + i) for i, month in enumerate(months)}
+    month_to_google_sheet_column = {
+        month: chr(66 + i) for i, month in enumerate(months)
+    }
 
-    # Determine last month
-    last_month_index = (datetime.datetime.now().month - 2) % 12
+    # most cases you would run this program after the months you're inserting to,
+    # meaning you would run this program in february for the numbers in january
+    last_month_index = (datetime.datetime.now().month - 2) % 12  # determine last month
     last_month = months[last_month_index]
 
-    # Prepare data to be inserted
+    # replace . to , since google sheet prefers that
+    # https://developers.google.com/sheets/api/guides/values#python
     values = [[f"{total:.2f}".replace(".", ",")] for total in totals.values()]
-    range_name = (
-        f"{sheet_name}!{month_to_column[last_month]}1:{month_to_column[last_month]}14"
-    )
+    range_name = f"{sheet_name}!{month_to_google_sheet_column[last_month]}1:{month_to_google_sheet_column[last_month]}14"
     body = {"values": values}
 
-    # Call the Sheets API
+    # call the sheets api
+    # https://developers.google.com/sheets/api/quickstart/python
     sheet = service.spreadsheets()
     result = (
         sheet.values()
