@@ -204,10 +204,20 @@ def update_sheet(totals):
     )
     service = build("sheets", "v4", credentials=credentials)
 
-    # Map months to columns
+    # map months to columns, proably a better way to do this
     months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
     ]
     month_to_google_sheet_column = {
         month: chr(66 + i) for i, month in enumerate(months)
@@ -218,50 +228,56 @@ def update_sheet(totals):
     last_month = months[last_month_index]
 
     # Prepare values for insertion
-    values = [[f"{total:.2f}".replace(".", ",").replace("-", "")] for total in totals.values()]
+    values = [
+        [f"{total:.2f}".replace(".", ",").replace("-", "")] for total in totals.values()
+    ]
     range_name = f"{sheet_name}!{month_to_google_sheet_column[last_month]}2:{month_to_google_sheet_column[last_month]}15"
     body = {"values": values}
 
     # Update the sheet with values
     sheet = service.spreadsheets()
-    result = sheet.values().update(
-        spreadsheetId=spreadsheet_id,
-        range=range_name,
-        valueInputOption="USER_ENTERED",
-        body=body
-    ).execute()
+    result = (
+        sheet.values()
+        .update(
+            spreadsheetId=spreadsheet_id,
+            range=range_name,
+            valueInputOption="USER_ENTERED",
+            body=body,
+        )
+        .execute()
+    )
     print(f"{result.get('updatedCells')} cells updated. Updated month: {last_month}")
 
     # format the updated cells as currency, meaning we're making two requests in total
-    requests = [{
-        "repeatCell": {
-            "range": {
-                "sheetId": sheet_id,
-                "startRowIndex": 1,
-                "endRowIndex": 15,
-                "startColumnIndex": ord(month_to_google_sheet_column[last_month]) - 65,
-                "endColumnIndex": ord(month_to_google_sheet_column[last_month]) - 64
-            },
-            "cell": {
-                "userEnteredFormat": {
-                    "numberFormat": {
-                        "type": "CURRENCY",
-                        "pattern": "#,##0.00 kr"
+    requests = [
+        {
+            "repeatCell": {
+                "range": {
+                    "sheetId": sheet_id,
+                    "startRowIndex": 1,
+                    "endRowIndex": 15,
+                    "startColumnIndex": ord(month_to_google_sheet_column[last_month])
+                    - 65,
+                    "endColumnIndex": ord(month_to_google_sheet_column[last_month])
+                    - 64,
+                },
+                "cell": {
+                    "userEnteredFormat": {
+                        "numberFormat": {"type": "CURRENCY", "pattern": "#,##0.00 kr"}
                     }
-                }
-            },
-            "fields": "userEnteredFormat.numberFormat"
+                },
+                "fields": "userEnteredFormat.numberFormat",
+            }
         }
-    }]
+    ]
 
-    body = {
-        "requests": requests
-    }
+    body = {"requests": requests}
 
-    response = service.spreadsheets().batchUpdate(
-        spreadsheetId=spreadsheet_id,
-        body=body
-    ).execute()
+    response = (
+        service.spreadsheets()
+        .batchUpdate(spreadsheetId=spreadsheet_id, body=body)
+        .execute()
+    )
 
     print("Response from batchUpdate:", response)
 
