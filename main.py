@@ -185,18 +185,17 @@ def print_totals(totals):
 
 def return_credentials():
     # makes the credentials "global"
-    json_credential = "client_secret.json"
+    json_credential = "config/spreadsheet_secret.json"
     with open(json_credential, "r") as file:
         data = json.load(file)
-        credentials_info = data["installed"]
         spreadsheet_id = data["spreadsheet"]["spreadsheet_id"]
         sheet_name = data["spreadsheet"]["sheet_name"]
 
-    return credentials_info, spreadsheet_id, sheet_name
+    return spreadsheet_id, sheet_name
 
 
 def update_sheet(totals):
-    credentials_info, spreadsheet_id, sheet_name = return_credentials()
+    spreadsheet_id, sheet_name = return_credentials()
 
     # load credentials and create a service object
     credentials = service_account.Credentials.from_service_account_file(
@@ -225,13 +224,13 @@ def update_sheet(totals):
 
     # most cases you would run this program after the months you're inserting to,
     # meaning you would run this program in february for the numbers in january
-    last_month_index = (datetime.datetime.now().month - 2) % 12  # determine last month
+    last_month_index = (datetime.datetime.now().month - 1) % 12  # change to 0 if doing it the same month
     last_month = months[last_month_index]
 
     # replace . to , since google sheet prefers that
     # https://developers.google.com/sheets/api/guides/values#python
-    values = [[f"{total:.2f}".replace(".", ",")] for total in totals.values()]
-    range_name = f"{sheet_name}!{month_to_google_sheet_column[last_month]}1:{month_to_google_sheet_column[last_month]}14"
+    values = [[f"{total:.2f}".replace(".", ",").replace("-","")] for total in totals.values()]
+    range_name = f"{sheet_name}!{month_to_google_sheet_column[last_month]}2:{month_to_google_sheet_column[last_month]}15"
     body = {"values": values}
 
     # call the sheets api
@@ -258,12 +257,12 @@ def delete_files(dir_path, files):
 
 
 def main(dir_path, files):
-    debug = False
+    debug = True  # kinda stupid, but works
     all_unknown_transactions, all_totals = process_all_files(dir_path, files)
     for unknown_transactions, totals in zip(all_unknown_transactions, all_totals):
         handle_unknown_transactions(unknown_transactions, totals)
         print("\nUpdated totals for file {}:".format(unknown_transactions[0][0]))
-        # TODO check if does actually does something
+        # TODO might need a rework
         # print_totals(totals)  # print the totals for the current file, might not be needed
         update_sheet(totals)
 
@@ -277,12 +276,15 @@ if __name__ == "__main__":
     directory_path = get_folder_path()
     csv_files = scan_folder_for_csv(directory_path)
 
-    # rename all CSV files within the directory to the format monthyear.csv
+    # rename all csv files within the directory to the format monthyear.csv
     renamed_csv_files = []
     for csv_file in csv_files:
         full_path = os.path.join(directory_path, csv_file)
         new_file_path = rename_csv_file(full_path)
-        renamed_csv_files.append(os.path.basename(new_file_path))
+        if new_file_path is not None:
+            renamed_csv_files.append(os.path.basename(new_file_path))
+        else:
+            print("could not find a valid date in the file to use")
 
     # process the renamed CSV files
     main(directory_path, renamed_csv_files)

@@ -26,20 +26,22 @@ def rename_csv_file(file_path):
     """
     with open(file_path, newline="", encoding="iso-8859-1") as f:
         reader = csv.reader(f, delimiter=";")
-        next(reader)  # Skip the header
-        row = next(reader)
-        date = row[0].replace('"', "")  # Remove quotes
+        next(reader)  # skip the header
+        for row in reader:
+            date = row[0].replace('"', "")
 
-    # Parse the date and format the new file name
-    parsed_date = datetime.strptime(date, "%Y/%m/%d")  # nordea uses '/'
+    # parse the date and format the new file name
+    # if the row does not have a date in, go to the next
+    try:
+        parsed_date = datetime.strptime(date, "%Y/%m/%d")
+        new_file_name = f"{parsed_date.strftime('%b').lower()}{parsed_date.year}.csv"
+        new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
+        os.rename(file_path, new_file_path)
+        return new_file_path
+    except ValueError:
+        pass  # go to the next line in the file
 
-    new_file_name = f"{parsed_date.strftime('%b').lower()}{parsed_date.year}.csv"
-
-    # Rename the file
-    new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
-    os.rename(file_path, new_file_path)
-
-    return new_file_path
+    return None
 
 
 def scan_folder_for_csv(folder_path):
