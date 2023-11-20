@@ -38,7 +38,6 @@ def test_classify_transactions_all_unknown(default_dicts):
         ("Unknown Merchant 3", 45),
     ]
 
-
     unknown = classify_transactions(transactions, categories, totals, skip)
 
     for total in totals.values():

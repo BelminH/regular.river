@@ -1,5 +1,9 @@
+import json
 import os
 import re
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+import datetime
 
 from db.database_manager import DatabaseManager
 from helpers.file_utils import (
@@ -8,7 +12,7 @@ from helpers.file_utils import (
     get_folder_path,
     scan_folder_for_csv,
 )
-from helpers.static_data import __SKIP
+from helpers.static_data import __SKIP, month_to_column
 
 db_manager = DatabaseManager("db/categories.db")
 categories = db_manager.load_categories()
@@ -97,7 +101,8 @@ def process_file(file_path):
     ]
 
     print("Updated totals:")
-    print_totals(totals)  # print the totals for the current file at the end
+    # print_totals(totals)  # print the totals for the current file at the end
+    update_sheet(totals)
     print("End of process_file function")
 
     return unknown_transactions, totals
@@ -159,9 +164,9 @@ def handle_unknown_transactions(unknown_transactions, totals):
             totals[selected_category] += amount
 
             # ask the user if they want to add the merchant to the database
-            add_to_db = str.lower(input(
-                f"Do you want to add '{merchant}' to the database? (y/n): "
-            ))
+            add_to_db = str.lower(
+                input(f"Do you want to add '{merchant}' to the database? (y/n): ")
+            )
             if add_to_db.lower() == "y":
                 db_name = input("What would you like to name it in the database?: ")
                 category_id = choice  # the ID of the selected category
@@ -171,12 +176,75 @@ def handle_unknown_transactions(unknown_transactions, totals):
                 )
 
 
-# TODO replace this with google api sheets later on
 def print_totals(totals):
     print("In print_totals function:")
     for category, total in totals.items():
         formatted_total = f"{total:.2f}".replace(".", ",")
         print(f"Total for {category}: {formatted_total}")
+
+
+def return_credentials():
+    # makes the credentials "global"
+    json_credential = "client_secret.json"
+    with open(json_credential, "r") as file:
+        data = json.load(file)
+        credentials_info = data["installed"]
+        spreadsheet_id = data["spreadsheet"]["spreadsheet_id"]
+        sheet_name = data["spreadsheet"]["sheet_name"]
+
+    return credentials_info, spreadsheet_id, sheet_name
+
+
+def update_sheet(totals):
+    credentials_info, spreadsheet_id, sheet_name = return_credentials()
+
+    # load credentials and create a service object
+    credentials = service_account.Credentials.from_service_account_file(
+        "client_secret.json"
+    )
+    service = build("sheets", "v4", credentials=credentials)
+
+    # map months to columns, probably a better way than this
+    months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ]
+    month_to_column = {month: chr(66 + i) for i, month in enumerate(months)}
+
+    # Determine last month
+    last_month_index = (datetime.datetime.now().month - 2) % 12
+    last_month = months[last_month_index]
+
+    # Prepare data to be inserted
+    values = [[f"{total:.2f}".replace(".", ",")] for total in totals.values()]
+    range_name = (
+        f"{sheet_name}!{month_to_column[last_month]}1:{month_to_column[last_month]}14"
+    )
+    body = {"values": values}
+
+    # Call the Sheets API
+    sheet = service.spreadsheets()
+    result = (
+        sheet.values()
+        .update(
+            spreadsheetId=spreadsheet_id,
+            range=range_name,
+            valueInputOption="RAW",
+            body=body,
+        )
+        .execute()
+    )
+    print(f"{result.get('updatedCells')} cells updated. Updated month: {last_month}")
 
 
 def delete_files(dir_path, files):
@@ -191,11 +259,10 @@ def main(dir_path, files):
     all_unknown_transactions, all_totals = process_all_files(dir_path, files)
     for unknown_transactions, totals in zip(all_unknown_transactions, all_totals):
         handle_unknown_transactions(unknown_transactions, totals)
-        print(
-            "\nUpdated totals for file {}:".format(unknown_transactions[0][0])
-        )
+        print("\nUpdated totals for file {}:".format(unknown_transactions[0][0]))
         # TODO check if does actually does something
-        print_totals(totals)  # print the totals for the current file, might not be needed
+        # print_totals(totals)  # print the totals for the current file, might not be needed
+        update_sheet(totals)
 
     if not debug:
         delete_files(dir_path, files)

@@ -66,3 +66,19 @@ categories = {
     "Income": [],
     "Credit": [],
 }
+
+# map months to columns in google sheet
+month_to_column = {
+    "January": "B",
+    "February": "C",
+    "March": "D",
+    "April": "E",
+    "May": "F",
+    "June": "G",
+    "July": "H",
+    "August": "I",
+    "September": "J",
+    "October": "K",
+    "November": "L",
+    "December": "M",
+}
