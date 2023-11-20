@@ -3,7 +3,7 @@ import os
 import re
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
-import datetime
+from datetime import datetime
 
 from db.database_manager import DatabaseManager
 from helpers.file_utils import (
@@ -204,7 +204,7 @@ def update_sheet(totals):
     )
     service = build("sheets", "v4", credentials=credentials)
 
-    # map months to columns, proably a better way to do this
+    # map months to columns, probably a better way to do this...
     months = [
         "January",
         "February",
@@ -224,24 +224,24 @@ def update_sheet(totals):
     }
 
     # find the last month
-    last_month_index = (datetime.datetime.now().month - 1) % 12
+    last_month_index = (datetime.now().month - 1) % 12
     last_month = months[last_month_index]
 
-    # Prepare values for insertion
+    # prepare values for insertion
     values = [
         [f"{total:.2f}".replace(".", ",").replace("-", "")] for total in totals.values()
     ]
     range_name = f"{sheet_name}!{month_to_google_sheet_column[last_month]}2:{month_to_google_sheet_column[last_month]}15"
     body = {"values": values}
 
-    # Update the sheet with values
+    # update the google sheet with values
     sheet = service.spreadsheets()
     result = (
         sheet.values()
         .update(
             spreadsheetId=spreadsheet_id,
             range=range_name,
-            valueInputOption="USER_ENTERED",
+            valueInputOption="USER_ENTERED",  # needed to not break the formatting, for cell {...}
             body=body,
         )
         .execute()
@@ -257,13 +257,14 @@ def update_sheet(totals):
                     "startRowIndex": 1,
                     "endRowIndex": 15,
                     "startColumnIndex": ord(month_to_google_sheet_column[last_month])
-                    - 65,
+                                        - 65,
                     "endColumnIndex": ord(month_to_google_sheet_column[last_month])
-                    - 64,
+                                      - 64,
                 },
                 "cell": {
                     "userEnteredFormat": {
                         "numberFormat": {"type": "CURRENCY", "pattern": "#,##0.00 kr"}
+                        # reformat the cells after it's been inserted
                     }
                 },
                 "fields": "userEnteredFormat.numberFormat",
@@ -293,12 +294,11 @@ def delete_files(dir_path, files):
 
 def main(dir_path, files):
     debug = True  # kinda stupid, but works
+    # TODO might need a rework, is a bit overcomplicated
     all_unknown_transactions, all_totals = process_all_files(dir_path, files)
     for unknown_transactions, totals in zip(all_unknown_transactions, all_totals):
         handle_unknown_transactions(unknown_transactions, totals)
         print("\nUpdated totals for file {}:".format(unknown_transactions[0][0]))
-        # TODO might need a rework
-        # print_totals(totals)  # print the totals for the current file, might not be needed
         update_sheet(totals)
 
     if not debug:
