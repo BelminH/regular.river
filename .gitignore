@@ -380,3 +380,4 @@ cython_debug/
 .ionide
 
 config/client_secret.json
+config/spreadsheet_secret.json
