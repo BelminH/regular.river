@@ -379,4 +379,4 @@ cython_debug/
 .history
 .ionide
 
-client_secret.json
+config/client_secret.json

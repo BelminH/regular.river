@@ -200,7 +200,7 @@ def update_sheet(totals):
 
     # load credentials and create a service object
     credentials = service_account.Credentials.from_service_account_file(
-        "client_secret.json"
+        "config/client_secret.json"
     )
     service = build("sheets", "v4", credentials=credentials)
 
