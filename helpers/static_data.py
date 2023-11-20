@@ -16,6 +16,7 @@ __SKIP = {
 # pre configures categories that will always load into the db (if they're not already there)
 # if you want to add more "steps" you would do this here and either drop categories or enter it manually
 categories = {
+    "Income": [],
     "Food and Groceries": [
         "REMA",
         "BUNNPRIS",
@@ -63,22 +64,5 @@ categories = {
     "Other expenses": ["TEKNA", "TILE", "SPOTIFY"],
     "Other": [],
     "Savings": [],
-    "Income": [],
     "Credit": [],
-}
-
-# map months to columns in google sheet
-month_to_column = {
-    "January": "B",
-    "February": "C",
-    "March": "D",
-    "April": "E",
-    "May": "F",
-    "June": "G",
-    "July": "H",
-    "August": "I",
-    "September": "J",
-    "October": "K",
-    "November": "L",
-    "December": "M",
 }

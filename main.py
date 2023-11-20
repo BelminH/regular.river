@@ -12,7 +12,7 @@ from helpers.file_utils import (
     get_folder_path,
     scan_folder_for_csv,
 )
-from helpers.static_data import __SKIP, month_to_column
+from helpers.static_data import __SKIP
 
 db_manager = DatabaseManager("db/categories.db")
 categories = db_manager.load_categories()
@@ -190,63 +190,82 @@ def return_credentials():
         data = json.load(file)
         spreadsheet_id = data["spreadsheet"]["spreadsheet_id"]
         sheet_name = data["spreadsheet"]["sheet_name"]
+        sheet_id = data["spreadsheet"]["sheet_id"]
 
-    return spreadsheet_id, sheet_name
+    return spreadsheet_id, sheet_name, sheet_id
 
 
 def update_sheet(totals):
-    spreadsheet_id, sheet_name = return_credentials()
+    spreadsheet_id, sheet_name, sheet_id = return_credentials()
 
-    # load credentials and create a service object
+    # Load credentials and create a service object
     credentials = service_account.Credentials.from_service_account_file(
         "config/client_secret.json"
     )
     service = build("sheets", "v4", credentials=credentials)
 
-    # map months to columns, probably a better way than this
+    # Map months to columns
     months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
     ]
     month_to_google_sheet_column = {
         month: chr(66 + i) for i, month in enumerate(months)
     }
 
-    # most cases you would run this program after the months you're inserting to,
-    # meaning you would run this program in february for the numbers in january
-    last_month_index = (datetime.datetime.now().month - 1) % 12  # change to 0 if doing it the same month
+    # find the last month
+    last_month_index = (datetime.datetime.now().month - 1) % 12
     last_month = months[last_month_index]
 
-    # replace . to , since google sheet prefers that
-    # https://developers.google.com/sheets/api/guides/values#python
-    values = [[f"{total:.2f}".replace(".", ",").replace("-","")] for total in totals.values()]
+    # Prepare values for insertion
+    values = [[f"{total:.2f}".replace(".", ",").replace("-", "")] for total in totals.values()]
     range_name = f"{sheet_name}!{month_to_google_sheet_column[last_month]}2:{month_to_google_sheet_column[last_month]}15"
     body = {"values": values}
 
-    # call the sheets api
-    # https://developers.google.com/sheets/api/quickstart/python
+    # Update the sheet with values
     sheet = service.spreadsheets()
-    result = (
-        sheet.values()
-        .update(
-            spreadsheetId=spreadsheet_id,
-            range=range_name,
-            valueInputOption="RAW",
-            body=body,
-        )
-        .execute()
-    )
+    result = sheet.values().update(
+        spreadsheetId=spreadsheet_id,
+        range=range_name,
+        valueInputOption="USER_ENTERED",
+        body=body
+    ).execute()
     print(f"{result.get('updatedCells')} cells updated. Updated month: {last_month}")
+
+    # format the updated cells as currency, meaning we're making two requests in total
+    requests = [{
+        "repeatCell": {
+            "range": {
+                "sheetId": sheet_id,
+                "startRowIndex": 1,
+                "endRowIndex": 15,
+                "startColumnIndex": ord(month_to_google_sheet_column[last_month]) - 65,
+                "endColumnIndex": ord(month_to_google_sheet_column[last_month]) - 64
+            },
+            "cell": {
+                "userEnteredFormat": {
+                    "numberFormat": {
+                        "type": "CURRENCY",
+                        "pattern": "#,##0.00 kr"
+                    }
+                }
+            },
+            "fields": "userEnteredFormat.numberFormat"
+        }
+    }]
+
+    body = {
+        "requests": requests
+    }
+
+    response = service.spreadsheets().batchUpdate(
+        spreadsheetId=spreadsheet_id,
+        body=body
+    ).execute()
+
+    print("Response from batchUpdate:", response)
+
+    print(f"Cells formatted as currency in month: {last_month}")
 
 
 def delete_files(dir_path, files):
