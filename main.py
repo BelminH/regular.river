@@ -224,7 +224,7 @@ def update_sheet(totals):
     }
 
     # find the last month
-    last_month_index = (datetime.now().month - 1) % 12
+    last_month_index = (datetime.now().month - 2) % 12
     last_month = months[last_month_index]
 
     # prepare values for insertion
@@ -293,7 +293,7 @@ def delete_files(dir_path, files):
 
 
 def main(dir_path, files):
-    debug = True  # kinda stupid, but works
+    debug = False  # kinda stupid, but works
     # TODO might need a rework, is a bit overcomplicated
     all_unknown_transactions, all_totals = process_all_files(dir_path, files)
     for unknown_transactions, totals in zip(all_unknown_transactions, all_totals):
