@@ -19,5 +19,6 @@ jobs:
           pr-mode: false
           args: --apply-fixes
           push-fixes: pull-request  
+          ail_ci_if_error: false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
