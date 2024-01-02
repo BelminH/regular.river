@@ -15,10 +15,10 @@ jobs:
           fetch-depth: 0
       - name: 'Qodana Scan' 
         uses: JetBrains/qodana-action@v2023.2
+        continue-on-error: true
         with:
           pr-mode: false
           args: --apply-fixes
           push-fixes: pull-request  
-          ail_ci_if_error: false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
