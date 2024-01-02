@@ -257,9 +257,9 @@ def update_sheet(totals):
                     "startRowIndex": 1,
                     "endRowIndex": 15,
                     "startColumnIndex": ord(month_to_google_sheet_column[last_month])
-                                        - 65,
+                    - 65,
                     "endColumnIndex": ord(month_to_google_sheet_column[last_month])
-                                      - 64,
+                    - 64,
                 },
                 "cell": {
                     "userEnteredFormat": {
