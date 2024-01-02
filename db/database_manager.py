@@ -168,6 +168,6 @@ class DatabaseManager:
 if __name__ == "__main__":
     db_manager = DatabaseManager("categories.db")
     db_manager.create_db()
-    db_manager.add_updated_at_column()  # Call this method to add the updated_at column
+    db_manager.add_updated_at_column()  # call this method to add the updated_at column
     categories = db_manager.load_categories()
     # db_manager.update_pattern(1, "UpdatedPattern")  # example call to update a pattern
