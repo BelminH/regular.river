@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 
-def is_valid_csv_file(file_path):
+def is_valid_csv_file(file_path: str):
     """
     Checks if the given file path points to a CSV file.
 
@@ -14,7 +14,7 @@ def is_valid_csv_file(file_path):
     return os.path.isfile(file_path) and file_path.lower().endswith(".csv")
 
 
-def rename_csv_file(file_path):
+def rename_csv_file(file_path: str) -> str:
     """
     Renames the CSV file based on the date found in the first row of the file.
 
@@ -44,7 +44,7 @@ def rename_csv_file(file_path):
     return None
 
 
-def scan_folder_for_csv(folder_path):
+def scan_folder_for_csv(folder_path: str):
     """
     Scans the specified folder for non-CSV files.
 
