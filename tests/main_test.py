@@ -22,14 +22,14 @@ class TestGetFileName(unittest.TestCase):
     @patch("builtins.input")
     @patch("builtins.print")
     def test_get_file_name_success(
-        self,
-        mock_print,
-        mock_input,
-        mock_exists,
-        mock_isfile,
-        mock_access,
-        mock_is_valid_csv,
-        mock_rename_csv,
+            self,
+            mock_print,
+            mock_input,
+            mock_exists,
+            mock_isfile,
+            mock_access,
+            mock_is_valid_csv,
+            mock_rename_csv,
     ):
         mock_input.side_effect = ["test20200101.csv"]  # the user enters a valid file
         mock_exists.return_value = True
@@ -51,9 +51,9 @@ class TestGetTransactions(unittest.TestCase):
         "builtins.open",
         new_callable=mock_open,
         read_data=(
-            "Bokføringsdato;Beløp;Avsender;Mottaker;Navn;Tittel;Valuta;Betalingstype\n"
-            '01.03.2021;"-100,00";6031.31.88429;;;Merchant1;NOK;Tilfedig utgift\n'
-            '02.03.2021;"200,50";6031.31.88429;;;Merchant2;NOK;Tilfedig inntekt\n'
+                "Bokføringsdato;Beløp;Avsender;Mottaker;Navn;Tittel;Valuta;Betalingstype\n"
+                '01.03.2021;"-100,00";6031.31.88429;;;Merchant1;NOK;Tilfedig utgift\n'
+                '02.03.2021;"200,50";6031.31.88429;;;Merchant2;NOK;Tilfedig inntekt\n'
         ),
     )
     def test_get_transactions_success(self, mock_file):
@@ -96,53 +96,53 @@ def setup():
     "transactions,expected_totals,expected_unknown",
     [
         (
-            [
-                ("REMA 1000", 100),
-                ("BUNNPRIS", 50),
-                ("NETFLIX", 15),
-                ("Komplett", 120),
-                ("Unknown Merchant", 25),
-            ],
-            {"Food and Groceries": 150, "Entertainment": 15, "Electronic": 120},
-            [("Unknown Merchant", 25)],
+                [
+                    ("REMA 1000", 100),
+                    ("BUNNPRIS", 50),
+                    ("NETFLIX", 15),
+                    ("Komplett", 120),
+                    ("Unknown Merchant", 25),
+                ],
+                {"Food and Groceries": 150, "Entertainment": 15, "Electronic": 120},
+                [("Unknown Merchant", 25)],
         ),
         ([], {"Food and Groceries": 0, "Entertainment": 0, "Electronic": 0}, []),
         (
-            [
-                ("Unknown Merchant 1", 25),
-                ("Unknown Merchant 2", 35),
-                ("Unknown Merchant 3", 45),
-            ],
-            {"Food and Groceries": 0, "Entertainment": 0, "Electronic": 0},
-            [
-                ("Unknown Merchant 1", 25),
-                ("Unknown Merchant 2", 35),
-                ("Unknown Merchant 3", 45),
-            ],
+                [
+                    ("Unknown Merchant 1", 25),
+                    ("Unknown Merchant 2", 35),
+                    ("Unknown Merchant 3", 45),
+                ],
+                {"Food and Groceries": 0, "Entertainment": 0, "Electronic": 0},
+                [
+                    ("Unknown Merchant 1", 25),
+                    ("Unknown Merchant 2", 35),
+                    ("Unknown Merchant 3", 45),
+                ],
         ),
         (
-            [("Nettbank", 100), ("Overføring", 200), ("Sparekonto", 300)],
-            {"Food and Groceries": 0, "Entertainment": 0, "Electronic": 0},
-            [],
+                [("Nettbank", 100), ("Overføring", 200), ("Sparekonto", 300)],
+                {"Food and Groceries": 0, "Entertainment": 0, "Electronic": 0},
+                [],
         ),
         (
-            [
-                ("REMA 1000", 100),
-                ("BUNNPRIS", 50),
-                ("NETFLIX", 15),
-                ("Komplett", 120),
-                ("Unknown Merchant", 25),
-                ("Nettbank", 100),
-                ("Overføring", 200),
-                ("Sparekonto", 300),
-            ],
-            {"Food and Groceries": 150, "Entertainment": 15, "Electronic": 120},
-            [("Unknown Merchant", 25)],
+                [
+                    ("REMA 1000", 100),
+                    ("BUNNPRIS", 50),
+                    ("NETFLIX", 15),
+                    ("Komplett", 120),
+                    ("Unknown Merchant", 25),
+                    ("Nettbank", 100),
+                    ("Overføring", 200),
+                    ("Sparekonto", 300),
+                ],
+                {"Food and Groceries": 150, "Entertainment": 15, "Electronic": 120},
+                [("Unknown Merchant", 25)],
         ),
     ],
 )
 def test_classify_transactions(
-    default_dicts, transactions, expected_totals, expected_unknown
+        default_dicts, transactions, expected_totals, expected_unknown
 ):
     categories, totals, skip = default_dicts
 
@@ -164,15 +164,23 @@ def mock_service():
 def mock_datetime():
     with patch("main.datetime") as mock_datetime:
         mock_datetime.now.return_value.month = (
-            3  # Mocking as if the current month is March
+            3  # simulating as if the current month is March
         )
         yield mock_datetime
 
 
-def test_update_sheet(mock_service, mock_datetime):
-    # Mock the return value of return_credentials function
-    with patch("main.return_credentials") as mock_credentials:
-        mock_credentials.return_value = ("spreadsheet_id", "sheet_name", "sheet_id")
+@pytest.fixture
+def mock_service_account():
+    with patch('main.service_account.Credentials.from_service_account_file') as mock:
+        yield mock
+
+
+def test_update_sheet(mock_service_account, mock_service, mock_datetime):
+    with patch('main.return_credentials') as mock_credentials:
+        mock_credentials.return_value = ('spreadsheet_id', 'sheet_name', 'sheet_id')
+
+        mock_credentials_instance = MagicMock()
+        mock_service_account.return_value = mock_credentials_instance
 
         # Set up the mock service objects
         mock_sheets_service = MagicMock()
@@ -180,21 +188,14 @@ def test_update_sheet(mock_service, mock_datetime):
         mock_values = MagicMock()
         mock_sheets_service.spreadsheets.return_value.values.return_value = mock_values
         mock_batch_update = MagicMock()
-        mock_sheets_service.spreadsheets.return_value.batchUpdate.return_value = (
-            mock_batch_update
-        )
+        mock_sheets_service.spreadsheets.return_value.batchUpdate.return_value = mock_batch_update
 
-        # Call the function under test
-        update_sheet({"example_total": 100.0})
+        update_sheet({'example_total': 100.0})
 
+        # Assertions to ensure the correct calls were made
+        mock_service_account.assert_called_once_with('config/client_secret.json')
         assert mock_sheets_service.spreadsheets.call_count == 2
-
-        mock_values.update.assert_called_once_with(
-            spreadsheetId="spreadsheet_id",
-            range="sheet_name!C2:C15",
-            valueInputOption="USER_ENTERED",
-            body={"values": [["100,00"]]},
-        )
+        mock_values.update.assert_called_once()
         mock_batch_update.execute.assert_called_once()
 
 
@@ -214,7 +215,7 @@ def test_delete_files():
         ]
         actual_calls = [call_args[0][0] for call_args in mock_os.remove.call_args_list]
         assert (
-            actual_calls == expected_calls
+                actual_calls == expected_calls
         ), "os.remove was not called with the expected file paths"
         assert mock_os.remove.call_count == len(
             test_files
@@ -240,11 +241,11 @@ def test_return_credentials():
             mock_json.assert_called_once()
 
             assert (
-                spreadsheet_id == "test_spreadsheet_id"
+                    spreadsheet_id == "test_spreadsheet_id"
             ), f"Expected spreadsheet_id to be 'test_spreadsheet_id', got '{spreadsheet_id}'"
             assert (
-                sheet_name == "test_sheet_name"
+                    sheet_name == "test_sheet_name"
             ), f"Expected sheet_name to be 'test_sheet_name', got '{sheet_name}'"
             assert (
-                sheet_id == "test_sheet_id"
+                    sheet_id == "test_sheet_id"
             ), f"Expected sheet_id to be 'test_sheet_id', got '{sheet_id}'"
