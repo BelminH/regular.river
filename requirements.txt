@@ -1,5 +1,5 @@
 black==24.4.2
-blinker==1.4
+blinker==1.8.2
 cachetools==5.3.2
 certifi==2023.11.17
 charset-normalizer==3.3.2
