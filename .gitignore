@@ -381,3 +381,5 @@ cython_debug/
 
 config/client_secret.json
 config/spreadsheet_secret.json
+
+db/categories.db
